@@ -7,12 +7,12 @@ import java.util.List;
 
 public interface NotificationPersist {
 
-    List<Notification> findByUserId(Long userId);
+    List<Notification> findNotificationsByUserId(Long userId);
 
-    void save(Notification notification);
+    void saveNotificationWithLogoutUser(Notification notification);
 
-    Notification findById(Long notificationId);
+    Notification findNotificationById(Long notificationId);
 
-    void delete(Long notificationId);
+    void deleteNotificationById(Long notificationId);
 
 }

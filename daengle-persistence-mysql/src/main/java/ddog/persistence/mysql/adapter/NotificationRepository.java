@@ -17,7 +17,7 @@ public class NotificationRepository implements NotificationPersist {
     private final NotificationJpaRepository notificationJpaRepository;
 
     @Override
-    public List<Notification> findByUserId(Long userId) {
+    public List<Notification> findNotificationsByUserId(Long userId) {
         return Optional.ofNullable(notificationJpaRepository.findByUserId(userId))
                 .filter(list -> list.isEmpty())
                 .orElseThrow(() -> new RuntimeException("No Notification Message"))
@@ -27,19 +27,19 @@ public class NotificationRepository implements NotificationPersist {
     }
 
     @Override
-    public void save(Notification notification) {
+    public void saveNotificationWithLogoutUser(Notification notification) {
         notificationJpaRepository.save(NotificationJpaEntity.from(notification));
     }
 
     @Override
-    public Notification findById(Long notificationId) {
+    public Notification findNotificationById(Long notificationId) {
         return notificationJpaRepository.findById(notificationId)
                 .orElseThrow(() -> new RuntimeException("No Notification Id"))
                 .toModel();
     }
 
     @Override
-    public void delete(Long notificationId) {
+    public void deleteNotificationById(Long notificationId) {
         notificationJpaRepository.deleteById(notificationId);
     }
 }

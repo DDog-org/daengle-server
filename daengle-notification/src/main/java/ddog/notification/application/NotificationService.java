@@ -2,76 +2,66 @@ package ddog.notification.application;
 
 import ddog.domain.notification.Notification;
 import ddog.domain.notification.enums.NotifyType;
+import ddog.notification.application.exception.NotificationException;
+import ddog.notification.application.exception.NotificationExceptionType;
+import ddog.notification.application.port.ClientConnect;
+import ddog.notification.application.port.UserStatusPersist;
 import ddog.persistence.mysql.port.NotificationPersist;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class NotificationService {
 
-    // 연결된 SseEmitter 목록
-    private final ConcurrentHashMap<Long, SseEmitter> ssemitters = new ConcurrentHashMap<>();
-
-    private final RedisService redisService;
-
+    private final ClientConnect clientConnect;
+    private final UserStatusPersist userStatusPersist;
     private final NotificationPersist notificationPersist;
 
-    public NotificationService(RedisService redisService, NotificationPersist notificationPersist) {
-        this.redisService = redisService;
+    public NotificationService(ClientConnect clientConnect,
+                               UserStatusPersist userStatusPersist,
+                               NotificationPersist notificationPersist) {
+        this.clientConnect = clientConnect;
+        this.userStatusPersist = userStatusPersist;
         this.notificationPersist = notificationPersist;
     }
 
-    // SSE 연결
-    public SseEmitter connect(Long userId) {
-        SseEmitter emitter = new SseEmitter();
-        ssemitters.put(userId, emitter);
-
-        redisService.loginUser(userId);
-
-        emitter.onTimeout(() -> {
-            ssemitters.remove(userId);
-            redisService.logoutUser(userId);
-
-        });
-        emitter.onCompletion(() -> {
-            ssemitters.remove(userId);
-            redisService.logoutUser(userId);
-        });
-
-        return emitter;
+    public SseEmitter connectClient(Long userId) {
+        return clientConnect.toConnectClient(userId);
     }
 
-    // 알림 전송
-    public void sendNotification(Long receiverId, NotifyType notifyType, String message) throws IOException {
-        if (ssemitters.containsKey(receiverId)) {
-            SseEmitter emitter = ssemitters.get(receiverId);
-            emitter.send(message);
-        }
-
-        else if (redisService.isUserLoggedIn(receiverId)) {
-            SseEmitter emitter = ssemitters.get(receiverId);
-            if (emitter != null) {
-                emitter.send(message);
+    public void sendNotificationToUser(Long receiverId, NotifyType notifyType, String message) {
+        try {
+            if (receiverId == null || message == null || notifyType == null) {
+                throw new NotificationException(NotificationExceptionType.ALERT_CAN_NOT, "알림 전송 실패");
             }
-        }
 
-        else {
-            Notification notification = Notification.builder()
-                    .userId(receiverId)
-                    .message(message)
-                    .notifyType(notifyType)
-                    .build();
+            if (clientConnect.isUserConnected(receiverId)) {
+                clientConnect.sendNotificationToUser(receiverId, message);
+            } else if (userStatusPersist.isUserLoggedIn(receiverId)) {
+                clientConnect.toConnectClient(receiverId);
+                clientConnect.sendNotificationToUser(receiverId, message);
+            } else {
+                Notification notification = Notification.builder()
+                        .userId(receiverId)
+                        .message(message)
+                        .notifyType(notifyType)
+                        .build();
 
-            notificationPersist.save(notification);
+                notificationPersist.saveNotificationWithLogoutUser(notification);
+            }
+        } catch (IOException e) {
+            throw new NotificationException(NotificationExceptionType.ALERT_CAN_NOT, e.getMessage());
         }
     }
 
-    // 로그인 시, 알림 목록 불러오기
-    public List<Notification> getAllNotifications(Long userId) {
-        return notificationPersist.findByUserId(userId);
+    public List<Notification> getAllNotificationsByUserId(Long userId) {
+        if (userId == null) {
+            throw new NotificationException(NotificationExceptionType.ALERT_CAN_NOT, "유저 정보 가져오지 못함");
+        }
+
+        return notificationPersist.findNotificationsByUserId(userId);
     }
 }

@@ -22,8 +22,4 @@ public enum NotifyType {
 
     private String message;
 
-//    @JsonCreator
-//    public static NotifyType fromString(String value) {
-//        return NotifyType.valueOf(value.toUpperCase());
-//    }
 }
