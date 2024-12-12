@@ -25,6 +25,22 @@ public class EstimateController {
         return success(estimateService.findEstimates(payloadDto.getAccountId()));
     }
 
+    /* (신규) 일반 견적서들 리스트 조회 */
+    @GetMapping("/general")
+    public CommonResponseEntity<EstimateInfo.General> findGeneralEstimates(
+            PayloadDto payloadDto,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        return success(estimateService.findGeneralEstimates(payloadDto.getAccountId(), page, size));
+    }
+
+    /* (신규) 지정 견적서들 리스트 조회 */
+    @GetMapping("/designation")
+    public CommonResponseEntity<EstimateInfo.Designation> findDesignationEstimates(PayloadDto payloadDto) {
+        return success(estimateService.findDesignationEstimates(payloadDto.getAccountId()));
+    }
+
     /* (신규) 미용 견적서 상세 조회 */
     @GetMapping("/{estimateId}/detail")
     public CommonResponseEntity<EstimateDetail> getEstimateDetail(@PathVariable Long estimateId) {

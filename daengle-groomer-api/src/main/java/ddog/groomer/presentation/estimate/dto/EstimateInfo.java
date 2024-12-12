@@ -12,20 +12,43 @@ import java.util.List;
 @Builder
 public class EstimateInfo {
 
-    List<Content> generalEstimates;
-    List<Content> designationEstimates;
+    @Getter
+    @Builder
+    public static class General {
+
+        private List<Content> estimates;
+
+        @Getter
+        @Builder
+        public static class Content {
+            private Long id;
+            private String imageURL;
+            private String nickname;
+            private Proposal proposal;
+            private String significant;
+
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+            private LocalDateTime reservedDate;
+        }
+    }
 
     @Getter
     @Builder
-    public static class Content {
-        private Long id;
-        private String image;
-        private String nickname;
-        private Proposal proposal;
-        private String significant;
+    public static class Designation {
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-        private LocalDateTime reservedDate;
+        private List<Content> estimates;
+
+        @Getter
+        @Builder
+        public static class Content {
+            private Long id;
+            private String imageURL;
+            private String nickname;
+            private Proposal proposal;
+            private String significant;
+
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+            private LocalDateTime reservedDate;
+        }
     }
-
 }

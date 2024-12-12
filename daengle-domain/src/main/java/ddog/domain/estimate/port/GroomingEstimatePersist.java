@@ -6,7 +6,6 @@ import ddog.domain.estimate.Proposal;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface GroomingEstimatePersist {
@@ -14,19 +13,13 @@ public interface GroomingEstimatePersist {
 
     Optional<GroomingEstimate> findByEstimateId(Long groomingEstimateId);
 
-    List<GroomingEstimate> findGroomingEstimatesByAddress(String address);
-
-    List<GroomingEstimate> findGroomingEstimatesByGroomerId(Long groomerId);
-
-    List<GroomingEstimate> findByPetIdAndStatusAndPageable(Long petId);
-
     void updateStatusWithParentId(EstimateStatus estimateStatus, Long parentId);
 
     Page<GroomingEstimate> findByPetIdAndStatusAndProposal(Long petId, EstimateStatus status, Proposal proposal, Pageable pageable);
 
-    boolean hasGeneralEstimateByPetId(Long petId);
-
-    boolean hasDesignationEstimateByPetId(Long petId);
-
     Optional<GroomingEstimate> findByEstimateStatusAndProposalAndPetId(EstimateStatus estimateStatus, Proposal proposal, Long petId);
+
+    Page<GroomingEstimate> findByStatusAndProposalAndAddress(EstimateStatus status, Proposal proposal, String address, Pageable pageable);
+
+    Page<GroomingEstimate> findByStatusAndProposalAndGroomerId(EstimateStatus status, Proposal proposal, Long groomerId, Pageable pageable);
 }
