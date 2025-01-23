@@ -6,7 +6,7 @@ import ddog.domain.groomer.port.GroomerPersist;
 import ddog.domain.vet.Vet;
 import ddog.domain.vet.enums.CareBadge;
 import ddog.domain.vet.port.VetPersist;
-import ddog.user.presentation.search.dto.SearchGroomingResultByKeyword;
+import ddog.user.presentation.search.dto.GroomerResult;
 import ddog.user.presentation.search.dto.SearchVetResultByKeyword;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,12 +22,12 @@ public class SearchService {
     private final GroomerPersist groomerPersist;
     private final VetPersist vetPersist;
 
-    public SearchGroomingResultByKeyword getGroomerResultBySearch(int page, int size, String address, String keyword, GroomingBadge badge) {
+    public GroomerResult findGroomerResultsBySearch(int page, int size, String address, String name, GroomingBadge badge) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Groomer> groomerPage = groomerPersist.findGroomerByKeyword(address, keyword, badge, pageable);
+        Page<Groomer> groomerPage = groomerPersist.findGroomersByKeywords(address, name, badge, pageable);
 
-        List<SearchGroomingResultByKeyword.ResultList> resultList = groomerPage.stream()
-                .map(groomer -> SearchGroomingResultByKeyword.ResultList.builder()
+        List<GroomerResult.Results> results = groomerPage.stream()
+                .map(groomer -> GroomerResult.Results.builder()
                         .partnerId(groomer.getAccountId())
                         .partnerName(groomer.getName())
                         .partnerImage(groomer.getImageUrl())
@@ -35,8 +35,8 @@ public class SearchService {
                         .build())
                 .toList();
 
-        return SearchGroomingResultByKeyword.builder()
-                .result(resultList)
+        return GroomerResult.builder()
+                .result(results)
                 .page(groomerPage.getNumber())
                 .size(groomerPage.getSize())
                 .totalElements(groomerPage.getTotalElements())

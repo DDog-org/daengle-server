@@ -19,11 +19,11 @@ public interface GroomerJpaRepository extends JpaRepository<GroomerJpaEntity, Lo
     @Query("SELECT v FROM Groomers v " +
             "LEFT JOIN v.keywords k " +
             "WHERE (:address IS NULL OR :address = '' OR v.address LIKE CONCAT('%', :address, '%')) " +
-            "AND (:keyword IS NULL OR :keyword = '' OR v.name LIKE CONCAT('%', :keyword, '%')) " +
+            "AND (:name IS NULL OR :name = '' OR v.name LIKE CONCAT('%', :name, '%')) " +
             "AND (:badge IS NULL OR :badge = '' OR :badge MEMBER OF v.badges)")
-    Page<GroomerJpaEntity> findAllGroomersBy(
+    Page<GroomerJpaEntity> findGroomersByKeywords(
             @Param("address") String address,
-            @Param("keyword") String keyword,
+            @Param("name") String name,
             @Param("badge") GroomingBadge badge,
             Pageable pageable
     );
