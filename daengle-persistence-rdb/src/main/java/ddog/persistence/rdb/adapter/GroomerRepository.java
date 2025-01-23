@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -36,9 +37,13 @@ public class GroomerRepository implements GroomerPersist {
     }
 
     @Override
-    public Page<Groomer> findGroomersByKeywords(String address, String name, GroomingBadge badge, Pageable pageable) {
-        return groomerJpaRepository.findGroomersByKeywords(address, name, badge, pageable)
-                .map(GroomerJpaEntity::toModel);
+    public List<Groomer> findGroomersByKeywords(String address, String name, GroomingBadge badge, Pageable pageable) {
+        Page<Long> pagedGroomerIds = groomerJpaRepository.findPagedGroomerIds(address, name, badge, pageable);
+        List<Long> groomerIds = pagedGroomerIds.getContent();
+
+        return groomerJpaRepository.findGroomersWithDetails(groomerIds)
+                .stream().map(GroomerJpaEntity::toModel)
+                .toList();
     }
 
     @Override

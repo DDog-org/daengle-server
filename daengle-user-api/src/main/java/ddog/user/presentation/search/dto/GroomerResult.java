@@ -9,9 +9,6 @@ import java.util.List;
 @Getter
 @Builder
 public class GroomerResult {
-    private int page;
-    private int size;
-    private long totalElements;
 
     List<Results> result;
 

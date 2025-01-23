@@ -24,7 +24,7 @@ public class SearchService {
 
     public GroomerResult findGroomerResultsBySearch(int page, int size, String address, String name, GroomingBadge badge) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Groomer> groomerPage = groomerPersist.findGroomersByKeywords(address, name, badge, pageable);
+        List<Groomer> groomerPage = groomerPersist.findGroomersByKeywords(address, name, badge, pageable);
 
         List<GroomerResult.Results> results = groomerPage.stream()
                 .map(groomer -> GroomerResult.Results.builder()
@@ -37,12 +37,10 @@ public class SearchService {
 
         return GroomerResult.builder()
                 .result(results)
-                .page(groomerPage.getNumber())
-                .size(groomerPage.getSize())
-                .totalElements(groomerPage.getTotalElements())
                 .build();
 
     }
+
     public SearchVetResultByKeyword getVetResultBySearch(int page, int size, String address, String keyword, CareBadge badge) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Vet> vetPage = vetPersist.findVetByKeyword(address, keyword, badge, pageable);

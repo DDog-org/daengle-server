@@ -20,6 +20,7 @@ import static ddog.auth.exception.common.CommonResponseEntity.success;
 public class SearchController {
 
     private final SearchService searchService;
+
     @GetMapping("/groomer")
     public CommonResponseEntity<GroomerResult> findGroomerSearchList(
             @RequestParam(defaultValue = "0") int page,
