@@ -28,10 +28,12 @@ public interface GroomerJpaRepository extends JpaRepository<GroomerJpaEntity, Lo
             Pageable pageable
     );
 
-    @Query("SELECT DISTINCT g FROM Groomers g " +
-            "LEFT JOIN FETCH g.badges b " +
-            "WHERE g.groomerId IN :ids")
-    List<GroomerJpaEntity> findGroomersWithDetails(@Param("ids") List<Long> ids);
+    @Query(value =
+            "SELECT g.account_id, g.name, g.image_url, b.grooming_badge " +
+            "FROM groomers g " +
+            "LEFT JOIN grooming_badges b ON g.groomer_id = b.groomer_id " +
+            "WHERE g.groomer_id IN :ids", nativeQuery = true)
+    List<Object[]> findGroomersWithDetails(@Param("ids") List<Long> ids);
 
     void deleteByAccountId(Long accountId);
 }

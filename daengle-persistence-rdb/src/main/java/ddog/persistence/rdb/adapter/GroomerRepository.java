@@ -1,6 +1,7 @@
 package ddog.persistence.rdb.adapter;
 
 import ddog.domain.groomer.Groomer;
+import ddog.domain.groomer.dto.SearchGroomerResultDto;
 import ddog.domain.groomer.enums.GroomingBadge;
 import ddog.persistence.rdb.jpa.entity.GroomerJpaEntity;
 import ddog.persistence.rdb.jpa.repository.GroomerJpaRepository;
@@ -10,8 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -37,13 +37,32 @@ public class GroomerRepository implements GroomerPersist {
     }
 
     @Override
-    public List<Groomer> findGroomersByKeywords(String address, String name, GroomingBadge badge, Pageable pageable) {
-        Page<Long> pagedGroomerIds = groomerJpaRepository.findPagedGroomerIds(address, name, badge, pageable);
-        List<Long> groomerIds = pagedGroomerIds.getContent();
+    public List<SearchGroomerResultDto> findGroomersByKeywords(String address, String name, GroomingBadge badge, Pageable pageable) {
+        List<Long> groomerIds = groomerJpaRepository.findPagedGroomerIds(address, name, badge, pageable).getContent();
+        List<Object[]> groomersWithDetails = groomerJpaRepository.findGroomersWithDetails(groomerIds);
 
-        return groomerJpaRepository.findGroomersWithDetails(groomerIds)
-                .stream().map(GroomerJpaEntity::toModel)
-                .toList();
+        Map<Long, SearchGroomerResultDto> dtoMap = new HashMap<>();
+
+        for (Object[] groomerWithDetail : groomersWithDetails) {
+            Long accountId = ((Number) groomerWithDetail[0]).longValue();
+            String groomerName = (String) groomerWithDetail[1];
+            String imageUrl = (String) groomerWithDetail[2];
+
+            if (!dtoMap.containsKey(accountId)){
+                dtoMap.put(accountId, new SearchGroomerResultDto(accountId, groomerName, imageUrl, new ArrayList<>()));
+            }
+
+            if (groomerWithDetail[3] == null) {
+                continue;
+            }
+
+            GroomingBadge groomingBadge = GroomingBadge.valueOf((String) groomerWithDetail[3]);
+            List<GroomingBadge> groomingBadges = dtoMap.get(accountId).getBadges();
+            groomingBadges.add(groomingBadge);
+            dtoMap.put(accountId, new SearchGroomerResultDto(accountId, groomerName, imageUrl, groomingBadges));
+        }
+
+        return new ArrayList<>(dtoMap.values());
     }
 
     @Override

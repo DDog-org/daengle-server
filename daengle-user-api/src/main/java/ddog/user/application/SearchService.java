@@ -1,6 +1,7 @@
 package ddog.user.application;
 
 import ddog.domain.groomer.Groomer;
+import ddog.domain.groomer.dto.SearchGroomerResultDto;
 import ddog.domain.groomer.enums.GroomingBadge;
 import ddog.domain.groomer.port.GroomerPersist;
 import ddog.domain.vet.Vet;
@@ -24,7 +25,7 @@ public class SearchService {
 
     public GroomerResult findGroomerResultsBySearch(int page, int size, String address, String name, GroomingBadge badge) {
         Pageable pageable = PageRequest.of(page, size);
-        List<Groomer> groomerPage = groomerPersist.findGroomersByKeywords(address, name, badge, pageable);
+        List<SearchGroomerResultDto> groomerPage = groomerPersist.findGroomersByKeywords(address, name, badge, pageable);
 
         List<GroomerResult.Results> results = groomerPage.stream()
                 .map(groomer -> GroomerResult.Results.builder()
@@ -38,7 +39,6 @@ public class SearchService {
         return GroomerResult.builder()
                 .result(results)
                 .build();
-
     }
 
     public SearchVetResultByKeyword getVetResultBySearch(int page, int size, String address, String keyword, CareBadge badge) {
