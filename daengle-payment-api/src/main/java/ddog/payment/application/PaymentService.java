@@ -21,6 +21,7 @@ import ddog.domain.review.port.CareReviewPersist;
 import ddog.domain.review.port.GroomingReviewPersist;
 import ddog.domain.user.User;
 import ddog.domain.user.port.UserPersist;
+import ddog.notification.application.KakaoNotificationService;
 import ddog.payment.application.dto.message.PaymentTimeoutMessage;
 import ddog.payment.application.dto.request.PaymentCallbackReq;
 import ddog.payment.application.dto.response.*;
@@ -31,6 +32,7 @@ import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -63,6 +65,9 @@ public class PaymentService {
     private final GroomingReviewPersist groomingReviewPersist;
 
     private final MessageSend messageSend;
+
+    private final Environment environment;
+    private final KakaoNotificationService kakaoNotificationService;
 
     @Transactional
     @TimeLimiter(name = "paymentValidation")
@@ -171,6 +176,8 @@ public class PaymentService {
 
             Reservation reservationToSave = ReservationMapper.createBy(savedOrder, payment);
             Reservation savedReservation = reservationPersist.save(reservationToSave);
+
+            kakaoNotificationService.sendOneTalk(savedReservation.getCustomerName(), savedReservation.getCustomerPhoneNumber(), environment.getProperty("templateId.ESTIMATED"));
 
             return PaymentCallbackResp.builder()
                     .customerId(savedOrder.getAccountId())
