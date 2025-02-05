@@ -3,6 +3,7 @@ package ddog.payment.presentation;
 import ddog.auth.dto.PayloadDto;
 import ddog.auth.exception.common.CommonResponseEntity;
 import ddog.domain.payment.enums.ServiceType;
+import ddog.notification.application.KakaoNotificationService;
 import ddog.payment.application.PaymentService;
 import ddog.payment.application.dto.request.CancelPaymentsRequest;
 import ddog.payment.application.dto.request.PaymentCallbackReq;
@@ -11,6 +12,8 @@ import ddog.payment.application.dto.response.PaymentCancelResp;
 import ddog.payment.application.dto.response.PaymentHistoryDetail;
 import ddog.payment.application.dto.response.PaymentHistoryListResp;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +28,16 @@ import static ddog.auth.exception.common.CommonResponseEntity.success;
 public class PaymentController {
 
     private final PaymentService paymentService;
+
+    private final KakaoNotificationService kakaoNotificationService;
+    private final Environment environment;
+
+    @GetMapping("/study")
+    public CommonResponseEntity<String> study() {
+        kakaoNotificationService.sendOneTalk("진명인", "010-9285-4118", environment.getProperty("templateId.REVIEWED"));
+
+        return success("SUCCESS");
+    }
 
     @PostMapping("/validate")
     public CompletableFuture<CommonResponseEntity<PaymentCallbackResp>> validationPayment(@RequestBody PaymentCallbackReq paymentCallbackReq) {

@@ -157,7 +157,7 @@ public class PaymentService {
             String paymentStatus = iamportResp.getStatus();
             long paymentAmount = iamportResp.getAmount().longValue();
 
-            if (payment.checkIncompleteBy(paymentStatus)) { //TODO 결제상태 변경과 영속도 도메인 엔티티에게 위임하기
+            if (payment.checkIncompleteBy(paymentStatus)) {     //TODO 결제상태 변경과 영속도 도메인 엔티티에게 위임하기
                 payment.invalidate();
                 paymentPersist.save(payment);
                 throw new PaymentException(PaymentExceptionType.PAYMENT_PG_INCOMPLETE);
