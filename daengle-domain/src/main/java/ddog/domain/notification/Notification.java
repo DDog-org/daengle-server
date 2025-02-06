@@ -9,10 +9,8 @@ import lombok.RequiredArgsConstructor;
 @Builder
 @RequiredArgsConstructor
 public class Notification {
-
     private final Long id;
     private final NotifyType notifyType;
     private final String message;
-    private final Long userId; // 알림대상
-
+    private final Long userId;
 }

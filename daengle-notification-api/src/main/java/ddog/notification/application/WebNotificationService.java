@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class NotificationService {
+public class WebNotificationService {
 
     private final ClientConnect clientConnect;
     private final NotificationPersist notificationPersist;

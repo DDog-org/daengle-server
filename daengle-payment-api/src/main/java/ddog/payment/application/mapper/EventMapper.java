@@ -4,7 +4,7 @@ import ddog.domain.event.enums.EventType;
 import ddog.domain.payment.Payment;
 import ddog.domain.payment.Reservation;
 import ddog.domain.payment.enums.PaymentStatus;
-import ddog.payment.presentation.dto.PaymentApplicationEvent;
+import ddog.payment.application.dto.event.PaymentApplicationEvent;
 
 public class EventMapper {
 

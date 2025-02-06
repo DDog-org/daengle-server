@@ -15,5 +15,4 @@ public interface NotificationPersist {
     Optional<Notification> findNotificationById(Long notificationId);
 
     void deleteNotificationById(Long notificationId);
-
 }

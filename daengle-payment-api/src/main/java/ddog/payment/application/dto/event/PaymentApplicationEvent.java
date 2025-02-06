@@ -1,4 +1,4 @@
-package ddog.payment.presentation.dto;
+package ddog.payment.application.dto.event;
 
 import ddog.domain.event.enums.EventType;
 import ddog.domain.payment.enums.PaymentStatus;

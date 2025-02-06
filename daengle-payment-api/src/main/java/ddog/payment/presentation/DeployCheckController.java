@@ -19,7 +19,6 @@ public class DeployCheckController {
     private final MessageSend messageSend;
     private String deploymentTime;
 
-    // 애플리케이션 시작 시 배포 시간 기록
     @PostConstruct
     public void init() {
         LocalDateTime now = LocalDateTime.now();

@@ -2,7 +2,6 @@ package ddog.vet.presentation.estimate;
 
 import ddog.auth.dto.PayloadDto;
 import ddog.auth.exception.common.CommonResponseEntity;
-import ddog.notification.application.KakaoNotificationService;
 import ddog.vet.application.EstimateService;
 import ddog.vet.presentation.estimate.dto.CreatePendingEstimateReq;
 import ddog.vet.presentation.estimate.dto.EstimateDetail;
@@ -20,7 +19,6 @@ import static ddog.auth.exception.common.CommonResponseEntity.success;
 public class EstimateController {
 
     private final EstimateService estimateService;
-    private final KakaoNotificationService kakaoNotificationService;
 
     private final Environment environment;
 
@@ -54,7 +52,6 @@ public class EstimateController {
     @PostMapping
     public CommonResponseEntity<EstimateResp> createEstimate(@RequestBody CreatePendingEstimateReq request, PayloadDto payloadDto) {
         EstimateInfo.EstimateUserInfo savedEstimate = estimateService.findByUserInfoByEstimateId(request.getId());
-        kakaoNotificationService.sendOneTalk(savedEstimate.getUserNickname(), savedEstimate.getUserPhone(), environment.getProperty("templateId.ESTIMATED"));
         return success(estimateService.createPendingEstimate(request, payloadDto.getAccountId()));
     }
 }

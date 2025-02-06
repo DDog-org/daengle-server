@@ -1,4 +1,4 @@
-package ddog.payment.application.web.adapter.in;
+package ddog.payment.application.adapter.web.in;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,8 +30,7 @@ public class PaymentTimeOutMessageListener implements PaymentTimeOutMessageListe
         try {
             paymentService.refundPayment(paymentTimeoutMessage.getPaymentUid(), paymentTimeoutMessage.getOrderUid());
 
-        } catch (Exception e) { //JobQ 재삽입
-
+        } catch (Exception e) {
             messageSend.sendWithDelay(paymentTimeoutMessage);
         }
     }

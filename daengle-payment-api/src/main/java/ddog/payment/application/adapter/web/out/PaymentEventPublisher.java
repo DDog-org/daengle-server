@@ -1,10 +1,12 @@
-package ddog.payment.application.web.adapter.out;
+package ddog.payment.application.adapter.web.out;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ddog.domain.event.EventPublish;
+import ddog.domain.event.port.EventPublish;
 import ddog.payment.application.config.aws.AwsProperties;
-import ddog.payment.presentation.dto.PaymentApplicationEvent;
+import ddog.payment.application.exception.PaymentException;
+import ddog.payment.application.exception.PaymentExceptionType;
+import ddog.payment.application.dto.event.PaymentApplicationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -33,11 +35,11 @@ public class PaymentEventPublisher implements EventPublish<PaymentApplicationEve
                     .build();
 
             PublishResponse response = snsClient.publish(request);
-            log.info("SNS 이벤트 발행 성공: Message ID = {}", response.messageId());
         } catch (JsonProcessingException e) {
-            log.error("이벤트 직렬화 실패: {}", e.getMessage(), e);
+            throw new PaymentException(PaymentExceptionType.PAYMENT_MESSAGE_PARSING_ERROR);
+
         } catch (Exception e) {
-            log.error("SNS 이벤트 발행 실패: {}", e.getMessage(), e);
+            throw new PaymentException(PaymentExceptionType.PAYMENT_EVENT_PUBLISH_ERROR);
         }
     }
 }

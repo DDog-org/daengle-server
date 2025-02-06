@@ -1,5 +1,7 @@
 package ddog.notification.application;
 
+import ddog.notification.application.exception.NotificationException;
+import ddog.notification.application.exception.NotificationExceptionType;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.KakaoOption;
@@ -34,7 +36,6 @@ public class KakaoNotificationService {
     private void executeNotification(String userName, String userPhoneNumber, String template) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<Void> future = executor.submit(() -> {
-            simulateDelay(); // 10초 지연 발생
             sendOneTalk(userName, userPhoneNumber, template);
             return null;
         });
@@ -42,9 +43,9 @@ public class KakaoNotificationService {
         try {
             future.get(5, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
-            throw new RuntimeException("Timeout: 알림톡 전송 요청이 5초를 초과했습니다.");
+            throw new NotificationException(NotificationExceptionType.NOTIFICATION_TIMEOUT);
         } catch (Exception e) {
-            throw new RuntimeException("알림톡 전송 중 오류 발생", e);
+            throw new NotificationException(NotificationExceptionType.NOTIFICATION_RUNTIME_EXCEPTION);
         } finally {
             executor.shutdownNow();
         }
@@ -59,7 +60,6 @@ public class KakaoNotificationService {
 
         HashMap<String, String> variables = new HashMap<>();
         variables.put("#{사용자}", userName);
-
         kakaoOption.setVariables(variables);
 
         Message messageTosend = new Message();
@@ -73,26 +73,17 @@ public class KakaoNotificationService {
         );
     }
 
-    private void simulateDelay() {
-        try {
-            Thread.sleep(3000); // 10초 지연
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
     @CircuitBreaker(name = "kakaoNotificationService", fallbackMethod = "fallbackSendOneTalk")
     public boolean sendOneMessage(String userName, String userPhoneNumber, String template) {
         try {
             executeNotification(userName, userPhoneNumber, template);
-            return true; // 성공 시 true 반환
+            return true;
         } catch (Exception e) {
-            throw new RuntimeException("카카오 알림톡 전송 실패", e);
+            throw new NotificationException(NotificationExceptionType.NOTIFICATION_RUNTIME_EXCEPTION);
         }
     }
 
     public boolean fallbackSendOneMessage(String userName, String userPhoneNumber, String template, Throwable throwable) {
-        logger.error("Fallback activated: 알림톡 전송 실패. 사용자: {}, 오류: {}", userName, throwable.getMessage());
         return false;
     }
 }
