@@ -64,9 +64,10 @@ dependencies {
 
     implementation(project(':daengle-persistence-queue')) // TODO 해당 의존성 걷어내야 함
 
-    // SQS
-//    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.1")
-//    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.2.0-M1'
+    // AWS
+    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.1")
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.0.1'
+    implementation 'software.amazon.awssdk:sns'
 }
 
 test {

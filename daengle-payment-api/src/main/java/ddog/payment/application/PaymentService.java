@@ -177,7 +177,7 @@ public class PaymentService {
             Reservation reservationToSave = ReservationMapper.createBy(savedOrder, payment);
             Reservation savedReservation = reservationPersist.save(reservationToSave);
 
-            kakaoNotificationService.sendOneTalk(savedReservation.getCustomerName(), savedReservation.getCustomerPhoneNumber(), environment.getProperty("templateId.ESTIMATED"));
+
 
             return PaymentCallbackResp.builder()
                     .customerId(savedOrder.getAccountId())

@@ -1,4 +1,4 @@
-package ddog.payment.application.config;
+package ddog.payment.application.config.aws;
 
 
 import lombok.Getter;
@@ -16,4 +16,5 @@ public class AwsProperties {
     private String accessKey;
     private String secretKey;
     private String region;
+    private String snsPaymentTopicArn;
 }
