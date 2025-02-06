@@ -1,0 +1,20 @@
+package ddog.payment.application.mapper;
+
+import ddog.domain.payment.Payment;
+import ddog.domain.payment.Reservation;
+import ddog.domain.payment.enums.PaymentStatus;
+import ddog.payment.presentation.dto.PaymentApplicationEvent;
+
+public class EventMapper {
+
+    public static PaymentApplicationEvent createBy(Payment payment, Reservation reservation) {
+        return new PaymentApplicationEvent (
+                reservation.getReservationId(),
+                payment.getPaymentId(),
+                reservation.getCustomerName(),
+                reservation.getCustomerPhoneNumber(),
+                payment.getPrice(),
+                PaymentStatus.PAYMENT_COMPLETED
+        );
+    }
+}

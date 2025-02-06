@@ -26,7 +26,10 @@ import ddog.payment.application.dto.message.PaymentTimeoutMessage;
 import ddog.payment.application.dto.request.PaymentCallbackReq;
 import ddog.payment.application.dto.response.*;
 import ddog.payment.application.exception.*;
+import ddog.payment.application.mapper.EventMapper;
 import ddog.payment.application.mapper.ReservationMapper;
+import ddog.payment.application.web.adapter.out.PaymentEventPublisher;
+import ddog.payment.presentation.dto.PaymentApplicationEvent;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.RequiredArgsConstructor;
@@ -65,9 +68,7 @@ public class PaymentService {
     private final GroomingReviewPersist groomingReviewPersist;
 
     private final MessageSend messageSend;
-
-    private final Environment environment;
-    private final KakaoNotificationService kakaoNotificationService;
+    private final PaymentEventPublisher paymentEventPublisher;
 
     @Transactional
     @TimeLimiter(name = "paymentValidation")
@@ -177,7 +178,9 @@ public class PaymentService {
             Reservation reservationToSave = ReservationMapper.createBy(savedOrder, payment);
             Reservation savedReservation = reservationPersist.save(reservationToSave);
 
-
+            // 이벤트 발행
+            PaymentApplicationEvent paymentEvent = EventMapper.createBy(payment, reservationToSave);
+            paymentEventPublisher.publishEvent(paymentEvent);
 
             return PaymentCallbackResp.builder()
                     .customerId(savedOrder.getAccountId())
