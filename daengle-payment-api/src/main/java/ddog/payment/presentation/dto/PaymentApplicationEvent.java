@@ -1,5 +1,6 @@
 package ddog.payment.presentation.dto;
 
+import ddog.domain.event.enums.EventType;
 import ddog.domain.payment.enums.PaymentStatus;
 
 public record PaymentApplicationEvent(
@@ -8,5 +9,6 @@ public record PaymentApplicationEvent(
         String customerName,
         String customerPhoneNumber,
         Long paymentAmount,
-        PaymentStatus paymentStatus
+        PaymentStatus paymentStatus,
+        EventType eventType
 ) {}

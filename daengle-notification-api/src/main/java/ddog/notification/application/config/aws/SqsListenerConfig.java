@@ -1,4 +1,4 @@
-package ddog.payment.application.config.aws;
+package ddog.notification.application.config.aws;
 
 import io.awspring.cloud.sqs.config.SqsMessageListenerContainerFactory;
 import org.springframework.context.annotation.Bean;

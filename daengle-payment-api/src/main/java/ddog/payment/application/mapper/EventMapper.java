@@ -1,5 +1,6 @@
 package ddog.payment.application.mapper;
 
+import ddog.domain.event.enums.EventType;
 import ddog.domain.payment.Payment;
 import ddog.domain.payment.Reservation;
 import ddog.domain.payment.enums.PaymentStatus;
@@ -14,7 +15,8 @@ public class EventMapper {
                 reservation.getCustomerName(),
                 reservation.getCustomerPhoneNumber(),
                 payment.getPrice(),
-                PaymentStatus.PAYMENT_COMPLETED
+                PaymentStatus.PAYMENT_COMPLETED,
+                EventType.PAYMENT
         );
     }
 }

@@ -2,9 +2,6 @@ package ddog.user.presentation.review;
 
 import ddog.auth.dto.PayloadDto;
 import ddog.auth.exception.common.CommonResponseEntity;
-import ddog.domain.notification.enums.NotifyType;
-import ddog.notification.application.KakaoNotificationService;
-import ddog.notification.application.NotificationService;
 import ddog.user.application.ReservationService;
 import ddog.user.presentation.reservation.dto.ReservationInfo;
 import ddog.user.presentation.review.dto.request.UpdateGroomingReviewInfo;
@@ -26,7 +23,6 @@ public class GroomingReviewController {
 
     private final GroomingReviewService groomingReviewService;
     private final ReservationService reservationService;
-    private final KakaoNotificationService kakaoNotificationService;
     private final Environment environment;
 
     @GetMapping("/grooming/review/{reviewId}")
@@ -37,7 +33,7 @@ public class GroomingReviewController {
     @PostMapping("/grooming/review")
     public CommonResponseEntity<ReviewResp> postReview(@RequestBody PostGroomingReviewInfo postGroomingReviewInfo) {
         ReservationInfo.ReservationUsersInfo findReservationInfo = reservationService.getGroomingUserAndPartnerDetail(postGroomingReviewInfo.getReservationId());
-        kakaoNotificationService.sendOneTalk(findReservationInfo.getUserName(), findReservationInfo.getPartnerPhone(), environment.getProperty("templateId.REVIEWED"));
+        //kakaoNotificationService.sendOneTalk(findReservationInfo.getUserName(), findReservationInfo.getPartnerPhone(), environment.getProperty("templateId.REVIEWED"));
         return success(groomingReviewService.postReview(postGroomingReviewInfo));
     }
 

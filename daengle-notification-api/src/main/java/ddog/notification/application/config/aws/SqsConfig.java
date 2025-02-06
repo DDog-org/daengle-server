@@ -1,4 +1,4 @@
-package ddog.payment.application.config.aws;
+package ddog.notification.application.config.aws;
 
 import io.awspring.cloud.sqs.operations.SqsTemplate;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,6 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
-
 
 @Configuration
 @RequiredArgsConstructor

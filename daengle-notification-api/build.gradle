@@ -29,5 +29,9 @@ dependencies {
 
     //prometheus
     implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    // AWS
+    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.1")
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.0.1'
 }
 

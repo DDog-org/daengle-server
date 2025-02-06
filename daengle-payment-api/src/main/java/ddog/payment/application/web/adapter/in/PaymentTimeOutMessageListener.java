@@ -3,6 +3,7 @@ package ddog.payment.application.web.adapter.in;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ddog.domain.message.port.MessageSend;
+import ddog.domain.payment.port.PaymentTimeOutMessageListen;
 import ddog.payment.application.PaymentService;
 import ddog.payment.application.dto.message.PaymentTimeoutMessage;
 import io.awspring.cloud.sqs.annotation.SqsListener;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class PaymentTimeOutMessageListener {
+public class PaymentTimeOutMessageListener implements PaymentTimeOutMessageListen<Message> {
 
     private final ObjectMapper objectMapper;
     private final PaymentService paymentService;
@@ -22,6 +23,7 @@ public class PaymentTimeOutMessageListener {
     private final MessageSend messageSend;
 
     //TODO 에러 로깅 슬랙 연동
+    @Override
     @SqsListener(value = "PaymentTimeoutQ", factory = "sqsListenerContainerFactory")
     public void listen(Message message) {
         PaymentTimeoutMessage paymentTimeoutMessage = parseMessageBody(message);
