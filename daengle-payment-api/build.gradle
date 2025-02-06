@@ -17,7 +17,7 @@ dependencies {
     // 내부 모듈 의존성
     implementation project(':daengle-domain')
     implementation project(':daengle-auth')
-    implementation project(':daengle-notification')
+    implementation project(':daengle-notification-api')
 
     // Spring Boot 의존성
     implementation 'org.springframework.boot:spring-boot-starter-web'
