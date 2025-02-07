@@ -25,17 +25,10 @@ public class NotificationMessageListener implements NotificationMessageListen<Me
     @SqsListener(value = "NotificationQueue", factory = "sqsListenerContainerFactory")
     public void listen(Message message) {
         try {
-            // 메시지 전체 로그 찍기
-            log.info("수신된 메시지: {}", message.body());
-
-            // "Message" 내부의 JSON 본문 추출
             JsonNode bodyNode = objectMapper.readTree(message.body());
-            String messageContent = bodyNode.get("Message").asText();  // SNS 래핑 메시지 해제
-            log.info("SNS 래핑 해제 후 메시지: {}", messageContent);
+            String messageContent = bodyNode.get("Message").asText();
 
-            // 실제 이벤트 메시지 파싱
             NotificationEvent notificationEvent = objectMapper.readValue(messageContent, NotificationEvent.class);
-            log.info("파싱된 NotificationEvent: {}", notificationEvent);
 
             handleEvent(notificationEvent);
 

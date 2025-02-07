@@ -1,6 +1,6 @@
 package ddog.notification.application.adapter;
 
-import ddog.notification.application.port.ClientConnect;
+import ddog.domain.notification.port.ClientConnect;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -8,10 +8,11 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class ClientConnector implements ClientConnect {
+public class ClientConnector implements ClientConnect<SseEmitter> {
 
     private final ConcurrentHashMap<Long, SseEmitter> ssemitters = new ConcurrentHashMap<>();
 
+    @Override
     public SseEmitter toConnectClient(Long userId) {
         SseEmitter emitter = new SseEmitter(36000000L);
         ssemitters.put(userId, emitter);
@@ -35,6 +36,7 @@ public class ClientConnector implements ClientConnect {
         return emitter;
     }
 
+    @Override
     public void sendNotificationToUser(Long receiverId, String message) throws IOException {
         if (isUserConnected(receiverId))  {
             SseEmitter emitter = ssemitters.get(receiverId);

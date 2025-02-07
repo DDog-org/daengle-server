@@ -1,6 +1,6 @@
-package ddog.notification.application.port;
+package ddog.domain.notification.port;
 
-public interface UserStatusPersist {
+public interface UserStatusManage {
     boolean isUserLoggedIn(Long userId);
     void setUserLogIn(Long userId);
     void setUserLogOut(Long userId);

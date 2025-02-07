@@ -8,7 +8,7 @@ import ddog.domain.user.port.UserPersist;
 import ddog.notification.application.dto.NotificationResp;
 import ddog.notification.application.exception.NotificationException;
 import ddog.notification.application.exception.NotificationExceptionType;
-import ddog.notification.application.port.ClientConnect;
+import ddog.domain.notification.port.ClientConnect;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class WebNotificationService {
 
-    private final ClientConnect clientConnect;
+    private final ClientConnect<SseEmitter> clientConnect;
     private final NotificationPersist notificationPersist;
     private final UserPersist userPersist;
 

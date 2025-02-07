@@ -1,13 +1,13 @@
 package ddog.notification.application.adapter;
 
-import ddog.notification.application.port.UserStatusPersist;
+import ddog.domain.notification.port.UserStatusManage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UserStatusManager implements UserStatusPersist {
+public class UserStatusManager implements UserStatusManage {
 
     private final RedisTemplate<String, String> redisTemplate;
 
