@@ -19,7 +19,7 @@
 <br />
 <br />
 
-![image](https://github.com/user-attachments/assets/cc1ff646-ccd0-4514-88da-1c047255b323)
+![멀티모듈_7](https://github.com/user-attachments/assets/f7bb12e2-2462-4cfd-9092-4389dfe6a63f)
 
 <br />
 <br />
@@ -33,7 +33,7 @@
 
 ### 🚛 CI/CD 모듈별 자동 배포
 
-api 모듈을 독립적ㅇ로 배포할 수 있도록 브랜치 전략을 활용했습니다. 
+api 모듈을 독립적으로 배포할 수 있도록 브랜치 전략을 활용했습니다. 
 이로써 각 모듈을 빠르게 빌드하고 배포할 수 있었습니다.
 단, 공통 라이브러리 모듈에 변경이 생길 때에는 모든 모듈을 재배포해야하기 때문에 이에 따른 워크플로우도 작성했습니다.
 <br />
@@ -60,10 +60,10 @@ api 모듈을 독립적ㅇ로 배포할 수 있도록 브랜치 전략을 활용
 
 <br />
 
-<div align=center>
-  
-![image](https://github.com/user-attachments/assets/015616e7-281f-4e0a-a510-55f410b74f4c)
-![image](https://github.com/user-attachments/assets/14ebfb68-d8cc-4940-a0c9-330df5c7893c)
+
+![페이먼츠_플로우](https://github.com/user-attachments/assets/8144f1e0-22db-43d8-99eb-53144f8bca67)
+
+
 </div>
 
 <br />
@@ -85,13 +85,15 @@ api 모듈을 독립적ㅇ로 배포할 수 있도록 브랜치 전략을 활용
 <br />
 
 ## 🏗️ 시스템 아키텍처
-![image](https://github.com/user-attachments/assets/2b25a36b-b837-4795-ab0b-8c9ad150cd9d)
+
+![아키텍처이벤트](https://github.com/user-attachments/assets/8efcdec5-005f-4292-a705-f1c2957eced3)
 
 <br />
 <br />
 
 ## 🚢 CI/CD
-![image](https://github.com/user-attachments/assets/3a0b13ec-0e92-48da-bc65-52d516f7ee32)
+
+![CICD_FLOW](https://github.com/user-attachments/assets/b1b341d9-c94e-42dc-be5a-a54e8f5b7d61)
 
 <br />
 <br />
