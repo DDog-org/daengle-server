@@ -5,7 +5,7 @@
   https://www.daengle.com
   <br>
   <br>
-  <strong>댕글</strong> ~~~~~~ 하는 서비스
+  <strong>댕글</strong> : 댕댕이 미용 및 건강 관리 중계 플랫폼
   <br>
 
 
@@ -48,8 +48,8 @@ api 모듈을 독립적으로 배포할 수 있도록 브랜치 전략을 활용
 
 ## 💬 DynamoDB + 실시간 채팅
 
-<br />
-<br />
+![채팅 플로우](https://github.com/user-attachments/assets/ffacb447-6102-45ce-b22c-1fee66008471)
+
 
 ## 🚀 SQL 튜닝을 통한 DB 최적화
 
