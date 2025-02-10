@@ -16,6 +16,8 @@ import ddog.domain.review.GroomingReview;
 import ddog.domain.review.port.GroomingReviewPersist;
 import ddog.domain.user.User;
 import ddog.domain.user.port.UserPersist;
+import ddog.user.application.adapter.web.out.ReviewEventPublisher;
+import ddog.user.application.dto.event.ReviewEvent;
 import ddog.user.application.exception.ReviewException;
 import ddog.user.application.exception.ReviewExceptionType;
 import ddog.user.application.exception.account.GroomerException;
@@ -24,6 +26,7 @@ import ddog.user.application.exception.account.UserException;
 import ddog.user.application.exception.account.UserExceptionType;
 import ddog.user.application.exception.estimate.ReservationException;
 import ddog.user.application.exception.estimate.ReservationExceptionType;
+import ddog.user.application.mapper.EventMapper;
 import ddog.user.application.mapper.GroomingReviewMapper;
 import ddog.user.presentation.review.dto.request.PostGroomingReviewInfo;
 import ddog.user.presentation.review.dto.request.UpdateGroomingReviewInfo;
@@ -55,6 +58,7 @@ public class GroomingReviewService {
     private final GroomerDaengleMeterPersist groomerDaengleMeterPersist;
 
     private final BanWordValidator banWordValidator;
+    private final ReviewEventPublisher reviewEventPublisher;
 
     @Transactional(readOnly = true)
     public GroomingReviewDetailResp findReview(Long reviewId) {
@@ -99,7 +103,7 @@ public class GroomingReviewService {
             throw new ReviewException(ReviewExceptionType.REVIEW_CONTENT_CONTAIN_BAN_WORD, includedBanWord);
 
         GroomingReview groomingReviewToSave = GroomingReviewMapper.createBy(reservation, postGroomingReviewInfo);
-        GroomingReview SavedGroomingReview = groomingReviewPersist.save(groomingReviewToSave);
+        GroomingReview savedGroomingReview = groomingReviewPersist.save(groomingReviewToSave);
 
         processKeywords(postGroomingReviewInfo, savedGroomer);
 
@@ -114,10 +118,14 @@ public class GroomingReviewService {
         savedGroomer.updateDaengleMeter(groomerDaengleMeter.getScore());
         groomerPersist.save(savedGroomer);
 
+        //이벤트 발행
+        ReviewEvent reviewEvent = EventMapper.createBy(savedGroomingReview, savedGroomer);
+        reviewEventPublisher.publishEvent(reviewEvent);
+
         return ReviewResp.builder()
-                .reviewId(SavedGroomingReview.getGroomingReviewId())
-                .reviewerId(SavedGroomingReview.getReviewerId())
-                .revieweeId(SavedGroomingReview.getGroomerId())
+                .reviewId(savedGroomingReview.getGroomingReviewId())
+                .reviewerId(savedGroomingReview.getReviewerId())
+                .revieweeId(savedGroomingReview.getGroomerId())
                 .banWord(null)
                 .build();
     }

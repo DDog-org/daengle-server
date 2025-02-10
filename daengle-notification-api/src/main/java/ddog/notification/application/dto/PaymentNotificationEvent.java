@@ -1,5 +1,6 @@
 package ddog.notification.application.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,10 +8,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class NotificationEvent {
-    private String eventType;
+@AllArgsConstructor
+public class PaymentNotificationEvent extends MessagePayload {
     private String customerName;
     private String customerPhoneNumber;
-    private String reviewerName;
-    private String revieweePhoneNumber;
+    private String paymentStatus;
 }
