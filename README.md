@@ -31,17 +31,6 @@
 <br />
 
 
-
-
-## 💬 DynamoDB + 실시간 채팅
-
-![채팅 플로우](https://github.com/user-attachments/assets/ffacb447-6102-45ce-b22c-1fee66008471)
-
-
-
-<br />
-<br />
-
 ## 💵 결제 시스템
 
 <br />
@@ -52,6 +41,16 @@
 
 </div>
 
+<br />
+
+
+## 💬 DynamoDB + 실시간 채팅
+
+![채팅 플로우](https://github.com/user-attachments/assets/ffacb447-6102-45ce-b22c-1fee66008471)
+
+
+
+<br />
 <br />
 
 ## 🕵️ 금칙어 필터링
@@ -102,7 +101,7 @@
   
 | 팀원  | 사진 | 역할 |
 |-----------------|-----------------|-----------------|
-| 진명인   |  <img src="https://avatars.githubusercontent.com/myeonginjin" alt="진명인" width="100"> | <ul><li>아키텍처</li><li>페이먼츠 시스템</li><li>금칙어 필터링 시스템</li></ul>     |
+| 진명인   |  <img src="https://avatars.githubusercontent.com/myeonginjin" alt="진명인" width="100"> | <ul><li>아키텍처·인프라</li><li>페이먼츠 시스템</li><li>금칙어 필터링 시스템</li></ul>     |
 | 백효석   |  <img src="https://avatars.githubusercontent.com/alexization" alt="백효석" width="100">| <ul><li>인증/인가 시스템</li><li>견적 입찰 시스템</li> |
 | 심지혜   |  <img src="https://avatars.githubusercontent.com/sapientia1007" alt="심지혜" width="100">    |<ul><li>실시간 채팅 시스템</li><li>검색 시스템</li></ul>  |
 
