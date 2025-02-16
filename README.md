@@ -11,10 +11,14 @@
 
 </div>
 
+## 🏗️ 시스템 아키텍처
+
+![아키텍처이벤트](https://github.com/user-attachments/assets/8efcdec5-005f-4292-a705-f1c2957eced3)
+
+<br />
+<br />
+
 ## 📦 멀티 모듈
-### 🔌 Ports & Adapters Architecture
-외부 라이브러리(JPA)로부터 도메인 객체와 비즈니스 로직 의존성을 역전 시켰습니다.
-각 가능에서 테스트 및 모니터링을 통해 기술스텍이 변경되는 일이 잦았습니다. 이때, 어뎁터만 변경해줌으로써 유연한 확장이 가능했습니다.
 
 <br />
 <br />
@@ -24,34 +28,14 @@
 <br />
 <br />
 
-### 🚨 장애대응
 
-외부 API를 사용하는 기능들에 타임아웃을 설정했습니다.
-외부 API 서버의 장애가 우리 API서버로의 장애로 전파되는 것을 방지했습니다.
-<br />
-<br />
 
-### 🚛 CI/CD 모듈별 자동 배포
-
-api 모듈을 독립적으로 배포할 수 있도록 브랜치 전략을 활용했습니다. 
-이로써 각 모듈을 빠르게 빌드하고 배포할 수 있었습니다.
-단, 공통 라이브러리 모듈에 변경이 생길 때에는 모든 모듈을 재배포해야하기 때문에 이에 따른 워크플로우도 작성했습니다.
-<br />
-<br />
-
-### 🖥️ 부하 테스트 및 성능 모니터링
-
-처음에는 모놀리식 프로젝트였습니다. 하지만 알림 API, 결제 API가 굉장히 많이 요청되는 기능에 붙어있기 때문에 만약 이 의존된 외부 API 서버에 장애가 생겼을 때, 우리 서버의 전반적인 장애로 이어질 것 같았습니다.
-해서, 의도적으로 타임아웃이 발동되도록 프로젝트를 세팅하고 부하테스트를 진행해보았습니다. 결과로 타임아웃에 묶여있는 스레드들로 인해 프로젝트 전반적인 장애가 생겼고, 멀티모듈로의 전환을 결심했습니다.
-<br />
-<br />
 
 ## 💬 DynamoDB + 실시간 채팅
 
 ![채팅 플로우](https://github.com/user-attachments/assets/ffacb447-6102-45ce-b22c-1fee66008471)
 
 
-## 🚀 SQL 튜닝을 통한 DB 최적화
 
 <br />
 <br />
@@ -84,12 +68,6 @@ api 모듈을 독립적으로 배포할 수 있도록 브랜치 전략을 활용
 <br />
 <br />
 
-## 🏗️ 시스템 아키텍처
-
-![아키텍처이벤트](https://github.com/user-attachments/assets/8efcdec5-005f-4292-a705-f1c2957eced3)
-
-<br />
-<br />
 
 ## 🚢 CI/CD
 
@@ -122,9 +100,9 @@ api 모듈을 독립적으로 배포할 수 있도록 브랜치 전략을 활용
   
 | 팀원  | 사진 | 역할 |
 |-----------------|-----------------|-----------------|
-| 진명인   |  <img src="https://avatars.githubusercontent.com/myeonginjin" alt="진명인" width="100"> | <ul><li>인프라 구축</li><li>페이먼츠 시스템</li><li>금칙어 필터링 시스템</li></ul>     |
+| 진명인   |  <img src="https://avatars.githubusercontent.com/myeonginjin" alt="진명인" width="100"> | <ul><li>아키텍처</li><li>페이먼츠 시스템</li><li>금칙어 필터링 시스템</li></ul>     |
 | 백효석   |  <img src="https://avatars.githubusercontent.com/alexization" alt="백효석" width="100">| <ul><li>인증/인가 시스템</li><li>견적 입찰 시스템</li> |
-| 심지혜   |  <img src="https://avatars.githubusercontent.com/sapientia1007" alt="심지혜" width="100">    |<ul><li>실시간 채팅 시스템</li><li>실시간 화상 시스템</li></ul>  |
+| 심지혜   |  <img src="https://avatars.githubusercontent.com/sapientia1007" alt="심지혜" width="100">    |<ul><li>실시간 채팅 시스템</li><li>검색 시스템</li></ul>  |
 
 </div>
 <br/> 
