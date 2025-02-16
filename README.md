@@ -10,6 +10,8 @@
 
 
 </div>
+<br />
+<br />
 
 ## 🏗️ 시스템 아키텍처
 
@@ -90,7 +92,7 @@
 | <a href="https://github.com/myeonginjin"> <img src="https://avatars.githubusercontent.com/myeonginjin" width=200px alt="_"/> </a> | <a href="https://github.com/alexization"> <img src="https://avatars.githubusercontent.com/alexization" width=200px alt="_"/> </a> | <a href="https://github.com/sapientia1007"> <img src="https://avatars.githubusercontent.com/sapientia1007" width=200px alt="_"/> </a> |
 |                                                               백엔드                                                                |                                                            백엔드                                                             |                                                              백엔드                                                               |
 |                                                 팀원들이 보는 명인은                                                                    |                                                       팀원들이 보는 효석은                                                        |                                                         팀원들이 보는 지혜는                                                        |
-| 🕵️‍부지런한 해결사 <br/> 👩‍💻개발이 제일 좋아, 찐 개발자 <br/> 🍜밥 잘 먹고 코드 맛있게 짜는 사람 <br/> 🚗맡은 일은 끝까지 간다! 진격의 개발자|🤩분위기 메이커<br/>😁항상 웃긴 재밌는 사람<br/>🏃‍매일같이 문열고 문닫는 성실왕<br/>👨‍🏫사소한 디테일 놓치지 않는 꼼꼼왕|🥳 언제나 맑은 긍정왕 <br />🔫 듬직한 트러블 슈터 <br />🤩항상 밝은 분위기 메이커 <br />🎯 버그 꼼짝마! 백발백중 버그 퇴치|
+| 🕵️‍문제를 깊이 분석하고 해결책을 찾아내는 <br/> 탐구가 <br/> 👩‍💻맡은 일에 대한 책임감이 강한 <br/>  신뢰형 개발자 <br/> 🚨한번 시작한 일은 끝을 보는 불도저 <br/> 😤열정 가득, 엉덩이가 무거운 개발자|🤩개발 시작은 개념부터, 깊게 공부해 기술을 제대로 활용하는<br/> 개발자<br/>🤔코드 하나 하나에 고민하는 찐 개발자<br/>🧹리펙토링은 나에게, 최적화의 달인<br/>🥘기본에 충실한 국밥 개발자|🤓너무 꼼꼼하고 철저한 변태(?) 개발자 <br />📑문서 정리 끝판왕, 개발 문서는 <br/>지혜에게 <br/> 😏꼼꼼함과 효율성을 겸비한 만능 <br/>플레이어 <br />😁답답한건 싫은 효율 끝판왕 개발자|
 
 <br />
 <br />
