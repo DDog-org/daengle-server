@@ -2,7 +2,7 @@
 
 <div align=center>
   <h1> 🐶댕글 서비스의 핵심 키워드!🐶 </h2>
-  https://www.daengle.com
+
   <br>
   <br>
   <strong>댕글</strong> : 댕댕이 미용 및 건강 관리 중계 플랫폼
