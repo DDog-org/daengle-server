@@ -1,7 +1,7 @@
 ![image](https://github.com/user-attachments/assets/1571a693-841e-471b-8b45-4efba5601e26)
 
 <div align=center>
-  <h1> 🐶댕글 서비스의 핵심 키워드!🐶 </h2>
+  <h1> 🐶 Hello Dangle World! 🐶 </h2>
 
   <br>
   <br>
