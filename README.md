@@ -42,15 +42,6 @@
 <br />
 
 
-## 💬 DynamoDB + 실시간 채팅
-
-![채팅 플로우](https://github.com/user-attachments/assets/ffacb447-6102-45ce-b22c-1fee66008471)
-
-
-
-<br />
-<br />
-
 ## 🕵️ 금칙어 필터링
 
 <br />
@@ -71,6 +62,13 @@
 ## 🚢 CI/CD
 
 ![CICD_FLOW](https://github.com/user-attachments/assets/b1b341d9-c94e-42dc-be5a-a54e8f5b7d61)
+
+<br />
+<br />
+
+## 💬 DynamoDB 설계도
+
+![채팅 플로우](https://github.com/user-attachments/assets/ffacb447-6102-45ce-b22c-1fee66008471)
 
 <br />
 <br />
