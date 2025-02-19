@@ -16,6 +16,8 @@ import ddog.domain.vet.enums.CareKeyword;
 import ddog.domain.vet.port.VetDaengleMeterPersist;
 import ddog.domain.vet.port.VetKeywordPersist;
 import ddog.domain.vet.port.VetPersist;
+import ddog.user.application.adapter.web.out.ReviewEventPublisher;
+import ddog.user.application.dto.event.ReviewEvent;
 import ddog.user.application.exception.ReviewException;
 import ddog.user.application.exception.ReviewExceptionType;
 import ddog.user.application.exception.account.UserException;
@@ -25,6 +27,7 @@ import ddog.user.application.exception.account.VetExceptionType;
 import ddog.user.application.exception.estimate.ReservationException;
 import ddog.user.application.exception.estimate.ReservationExceptionType;
 import ddog.user.application.mapper.CareReviewMapper;
+import ddog.user.application.mapper.EventMapper;
 import ddog.user.presentation.review.dto.request.PostCareReviewInfo;
 import ddog.user.presentation.review.dto.request.UpdateCareReviewInfo;
 import ddog.user.presentation.review.dto.response.CareReviewDetailResp;
@@ -40,7 +43,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -56,6 +58,7 @@ public class CareReviewService {
     private final VetDaengleMeterPersist vetDaengleMeterPersist;
 
     private final BanWordValidator banWordValidator;
+    private final ReviewEventPublisher reviewEventPublisher;
 
     @Transactional(readOnly = true)
     public CareReviewDetailResp findReview(Long reviewId) {
@@ -114,6 +117,10 @@ public class CareReviewService {
 
         savedVet.updateDaengleMeter(vetDaengleMeter.getScore());
         vetPersist.save(savedVet);
+
+        //이벤트 발행
+        ReviewEvent reviewEvent = EventMapper.createBy(savedCareReview, savedVet);
+        reviewEventPublisher.publishEvent(reviewEvent);
 
         return ReviewResp.builder()
                 .reviewId(savedCareReview.getCareReviewId())
@@ -192,7 +199,6 @@ public class CareReviewService {
                 .reviewerId(updatedCareReview.getReviewerId())
                 .revieweeId(updatedCareReview.getVetId())
                 .banWord(null)
-
                 .build();
     }
 

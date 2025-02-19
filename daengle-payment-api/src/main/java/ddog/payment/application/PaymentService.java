@@ -25,7 +25,10 @@ import ddog.payment.application.dto.message.PaymentTimeoutMessage;
 import ddog.payment.application.dto.request.PaymentCallbackReq;
 import ddog.payment.application.dto.response.*;
 import ddog.payment.application.exception.*;
+import ddog.payment.application.mapper.EventMapper;
 import ddog.payment.application.mapper.ReservationMapper;
+import ddog.payment.application.adapter.web.out.PaymentEventPublisher;
+import ddog.payment.application.dto.event.PaymentApplicationEvent;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +66,7 @@ public class PaymentService {
     private final GroomingReviewPersist groomingReviewPersist;
 
     private final MessageSend messageSend;
+    private final PaymentEventPublisher paymentEventPublisher;
 
     @Transactional
     @TimeLimiter(name = "paymentValidation")
@@ -152,7 +156,7 @@ public class PaymentService {
             String paymentStatus = iamportResp.getStatus();
             long paymentAmount = iamportResp.getAmount().longValue();
 
-            if (payment.checkIncompleteBy(paymentStatus)) { //TODO 결제상태 변경과 영속도 도메인 엔티티에게 위임하기
+            if (payment.checkIncompleteBy(paymentStatus)) {     //TODO 결제상태 변경과 영속도 도메인 엔티티에게 위임하기
                 payment.invalidate();
                 paymentPersist.save(payment);
                 throw new PaymentException(PaymentExceptionType.PAYMENT_PG_INCOMPLETE);
@@ -171,6 +175,10 @@ public class PaymentService {
 
             Reservation reservationToSave = ReservationMapper.createBy(savedOrder, payment);
             Reservation savedReservation = reservationPersist.save(reservationToSave);
+
+            // 이벤트 발행
+            PaymentApplicationEvent paymentEvent = EventMapper.createBy(payment, savedReservation);
+            paymentEventPublisher.publishEvent(paymentEvent);
 
             return PaymentCallbackResp.builder()
                     .customerId(savedOrder.getAccountId())

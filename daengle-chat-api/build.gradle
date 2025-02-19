@@ -15,7 +15,6 @@ dependencies {
     implementation(project(':daengle-domain'))
     implementation(project(':daengle-persistence-nosql')) // TODO 해당 의존성 걷어내야 함
     implementation(project(':daengle-auth'))
-    implementation(project(':daengle-notification'))
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
 

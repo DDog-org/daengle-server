@@ -17,7 +17,6 @@ dependencies {
     // 내부 모듈 의존성
     implementation project(':daengle-domain')
     implementation project(':daengle-auth')
-    implementation project(':daengle-notification')
 
     // Spring Boot 의존성
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -57,16 +56,17 @@ dependencies {
     implementation 'io.github.resilience4j:resilience4j-timelimiter:2.0.2'
 
     //actuator
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    //implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     //prometheus
-    implementation 'io.micrometer:micrometer-registry-prometheus'
+    //implementation 'io.micrometer:micrometer-registry-prometheus'
 
     implementation(project(':daengle-persistence-queue')) // TODO 해당 의존성 걷어내야 함
 
-    // SQS
+    // AWS
     implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.1")
-    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.2.0-M1'
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.0.1'
+    implementation 'software.amazon.awssdk:sns'
 }
 
 test {

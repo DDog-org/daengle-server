@@ -9,7 +9,6 @@ jar {
 dependencies {
     implementation(project(':daengle-domain'))
     implementation(project(':daengle-auth'))
-    implementation(project(':daengle-notification'))
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.data:spring-data-commons'
