@@ -54,7 +54,7 @@
 <br />
 
 ## 🧰 기술 스택
-![image](https://github.com/user-attachments/assets/1f16efb5-5d72-449c-b3fb-bbe83b2446d1)
+![댕글 기술스택](https://github.com/user-attachments/assets/aa25f2eb-46af-4cb9-9480-d47fb8c11c97)
 <br />
 <br />
 
