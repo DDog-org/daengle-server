@@ -20,7 +20,7 @@
 <br />
 <br />
 
-## 📦 멀티 모듈
+## 📦 레포지토리 구조도
 
 ![멀티모듈](https://github.com/user-attachments/assets/4a430e36-25a0-4176-ab2c-d89b94175c49)
 
