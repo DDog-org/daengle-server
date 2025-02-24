@@ -22,8 +22,8 @@
 
 ## 📦 멀티 모듈
 
+![멀티모듈](https://github.com/user-attachments/assets/4a430e36-25a0-4176-ab2c-d89b94175c49)
 
-![멀티모듈_7](https://github.com/user-attachments/assets/f7bb12e2-2462-4cfd-9092-4389dfe6a63f)
 
 <br />
 <br />
