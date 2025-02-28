@@ -5,7 +5,7 @@
 
   <br>
   <br>
-  <strong>댕글</strong> : 댕댕이 미용 및 건강 관리 중계 플랫폼
+  <strong>댕글</strong> : 애견 미용 및 건강 관리 중계 플랫폼
   <br>
 
 
