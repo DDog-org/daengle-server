@@ -1,7 +1,7 @@
 name: Deploy to Develop EC2
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "NONE" ]
 
 jobs:
   deploy:
