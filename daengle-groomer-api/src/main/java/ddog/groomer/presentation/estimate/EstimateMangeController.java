@@ -1,5 +1,6 @@
 package ddog.groomer.presentation.estimate;
 
+import ddog.auth.annotation.AuthPayload;
 import ddog.auth.dto.PayloadDto;
 import ddog.auth.exception.common.CommonResponseEntity;
 import ddog.groomer.application.EstimateManageService;
@@ -21,12 +22,14 @@ public class EstimateMangeController {
     private final EstimateManageService estimateManageService;
 
     @GetMapping("/reservation/{reservationId}")
-    public CommonResponseEntity<ReservationEstimateContent> findReservationOrEstimateBy(@PathVariable Long reservationId, PayloadDto payloadDto) {
+    public CommonResponseEntity<ReservationEstimateContent> findReservationOrEstimateBy(@PathVariable Long reservationId,
+                                                                                        @AuthPayload PayloadDto payloadDto) {
         return success(estimateManageService.findEstimateDetailByGroomerIdAndPetId(payloadDto.getAccountId(), reservationId));
     }
 
     @GetMapping("/week/{date}")
-    public CommonResponseEntity<WeekScheduleResp> findWeekSchedule(PayloadDto payloadDto, @PathVariable String date){
+    public CommonResponseEntity<WeekScheduleResp> findWeekSchedule(@AuthPayload PayloadDto payloadDto,
+                                                                   @PathVariable String date){
         return success(estimateManageService.findScheduleByGroomerIdAndDate(payloadDto.getAccountId(), date));
     }
 
