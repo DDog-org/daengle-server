@@ -1,5 +1,6 @@
 package ddog.vet.presentation.schedule;
 
+import ddog.auth.annotation.AuthPayload;
 import ddog.auth.dto.PayloadDto;
 import ddog.auth.exception.common.CommonResponseEntity;
 import ddog.vet.application.ScheduleInfoService;
@@ -17,7 +18,7 @@ public class ScheduleController {
     private final ScheduleInfoService scheduleInfoService;
 
     @GetMapping("/schedule")
-    public CommonResponseEntity<ScheduleResp> getVetSchedule(PayloadDto payloadDto) {
+    public CommonResponseEntity<ScheduleResp> getVetSchedule(@AuthPayload PayloadDto payloadDto) {
         return success(scheduleInfoService.getScheduleByVetAccountId(payloadDto.getAccountId()));
     }
 
