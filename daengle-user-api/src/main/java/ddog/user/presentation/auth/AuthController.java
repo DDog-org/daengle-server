@@ -1,5 +1,6 @@
 package ddog.user.presentation.auth;
 
+import ddog.auth.annotation.AuthPayload;
 import ddog.auth.dto.AccessTokenInfo;
 import ddog.auth.dto.KakaoAccessTokenDto;
 import ddog.auth.dto.PayloadDto;
@@ -36,7 +37,7 @@ public class AuthController {
     }
 
     @GetMapping("/validate")
-    public CommonResponseEntity<ValidateResp> validateMember(PayloadDto payloadDto) {
+    public CommonResponseEntity<ValidateResp> validateMember(@AuthPayload(required = false) PayloadDto payloadDto) {
         return success(authService.validateMember(payloadDto.getAccountId()));
     }
 }

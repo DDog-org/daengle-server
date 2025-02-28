@@ -1,5 +1,6 @@
 package ddog.user.presentation.detailInfo;
 
+import ddog.auth.annotation.AuthPayload;
 import ddog.auth.dto.PayloadDto;
 import ddog.auth.exception.common.CommonResponseEntity;
 import ddog.user.application.DetailInfoService;
@@ -17,7 +18,8 @@ public class DetailInfoController {
     private final DetailInfoService detailInfoService;
 
     @GetMapping("/shops")
-    public CommonResponseEntity<DetailResp> getBeautyShopsList(@RequestParam(required = false) String address, PayloadDto payloadDto,
+    public CommonResponseEntity<DetailResp> getBeautyShopsList(@RequestParam(required = false) String address,
+                                                               @AuthPayload(required = false) PayloadDto payloadDto,
                                                                @RequestParam(defaultValue = "0") int page,
                                                                @RequestParam(defaultValue = "5") int size) {
         return success(detailInfoService.findBeautyShops(payloadDto.getAccountId(), address, page, size));
@@ -25,7 +27,7 @@ public class DetailInfoController {
 
     @GetMapping("/vets")
     public CommonResponseEntity<DetailResp> getVetsList(@RequestParam(required = false) String address,
-                                                        PayloadDto payloadDto,
+                                                        @AuthPayload(required = false) PayloadDto payloadDto,
                                                         @RequestParam(defaultValue = "0") int page,
                                                         @RequestParam(defaultValue = "5") int size){
         return success(detailInfoService.findVets(payloadDto.getAccountId(), address, page, size));
