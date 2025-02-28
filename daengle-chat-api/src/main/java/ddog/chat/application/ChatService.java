@@ -9,13 +9,10 @@ import ddog.domain.account.Role;
 import ddog.domain.account.port.AccountPersist;
 import ddog.domain.chat.ChatMessage;
 import ddog.domain.chat.ChatRoom;
+import ddog.domain.chat.dto.ChatRoomListDto;
 import ddog.domain.chat.enums.PartnerType;
 import ddog.domain.chat.port.ChatMessagePersist;
 import ddog.domain.chat.port.ChatRoomPersist;
-import ddog.domain.estimate.CareEstimate;
-import ddog.domain.estimate.GroomingEstimate;
-import ddog.domain.estimate.port.CareEstimatePersist;
-import ddog.domain.estimate.port.GroomingEstimatePersist;
 import ddog.domain.groomer.Groomer;
 import ddog.domain.groomer.port.GroomerPersist;
 import ddog.domain.user.User;
@@ -115,36 +112,26 @@ public class ChatService {
     }
 
     public UserChatRoomListResp findUserChatRoomList(Long userId, PartnerType partnerType) {
-        List<ChatRoom> savedChatRooms = chatRoomPersist.findByUserIdAndPartnerType(userId, partnerType);
+        List<ChatRoomListDto> savedChatRooms = chatRoomPersist.findByUserIdAndPartnerType(userId, partnerType);
 
         if (savedChatRooms == null || savedChatRooms.isEmpty()) {
             return UserChatRoomListResp.builder().roomList(Collections.emptyList()).build();
         }
 
         List<UserChatRoomListResp.RoomList> userChatRoomListResps = new ArrayList<>();
-        for (ChatRoom savedChatRoom : savedChatRooms) {
 
-            String partnerName = null;
-            String partnerProfile = null;
+        for (ChatRoomListDto savedChatRoom : savedChatRooms) {
+            String partnerName = savedChatRoom.getPartnerName();
+            String partnerProfile = savedChatRoom.getPartnerProfile();
 
-            Account partnerAccount = accountPersist.findById(savedChatRoom.getPartnerId());
-            if (partnerAccount.getRole().equals(Role.GROOMER)) {
-                Groomer savedGroomer = groomerPersist.findByAccountId(partnerAccount.getAccountId()).orElse(null);
-                partnerName = (savedGroomer != null) ? savedGroomer.getName() : null;
-                partnerProfile = (savedGroomer != null) ? savedGroomer.getImageUrl() : null;
-            } else if (partnerAccount.getRole().equals(Role.VET)) {
-                Vet savedVet = vetPersist.findByAccountId(partnerAccount.getAccountId()).orElse(null);
-                partnerName = (savedVet != null) ? savedVet.getName() : null;
-                partnerProfile = (savedVet != null) ? savedVet.getImageUrl() : null;
-            }
-            ChatMessage savedLastMessages = chatMessagePersist.findLatestMessageByRoomId(savedChatRoom.getChatRoomId());
+            ChatMessage savedLastMessages = chatMessagePersist.findLatestMessageByRoomId(savedChatRoom.getRoomId());
             String lastMessage = (savedLastMessages != null) ? savedLastMessages.getContent() : "";
             String messageTime = (savedLastMessages != null)
                     ? savedLastMessages.getTimestamp().toString()
                     : "";
 
             userChatRoomListResps.add(UserChatRoomListResp.RoomList.builder()
-                    .roomId(savedChatRoom.getChatRoomId())
+                    .roomId(savedChatRoom.getRoomId())
                     .otherId(savedChatRoom.getPartnerId())
                     .otherName(partnerName)
                     .otherProfile(partnerProfile)
