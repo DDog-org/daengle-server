@@ -22,10 +22,11 @@ import ddog.domain.vet.Vet;
 import ddog.domain.vet.port.VetPersist;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,59 +45,52 @@ public class ChatService {
         return findOrSaveChatRoom(role, accountId, otherUserId);
     }
 
+    @Transactional(readOnly = true)
     public ChatMessagesListResp getAllMessagesByRoomId(Role role, Long userAccountId, Long otherUserId) {
         ChatRoom savedChatRoom = startChat(role, userAccountId, otherUserId);
+
+        CompletableFuture<Account> otherUserFuture = CompletableFuture.supplyAsync(() -> accountPersist.findById(otherUserId));
+        CompletableFuture<List<ChatMessage>> messagesFuture = CompletableFuture.supplyAsync(() ->
+                chatMessagePersist.findByChatRoomId(savedChatRoom.getChatRoomId())
+        );
+
+        Account otherUser = otherUserFuture.join();
+        List<ChatMessage> savedMessages = messagesFuture.join();
+
         String otherUserProfile = null;
         String otherUserName = null;
-        if (role.equals(Role.DAENGLE)) {
-            Account savedOtherUser = accountPersist.findById(otherUserId);
-            if (savedOtherUser.getRole().equals(Role.GROOMER)) {
-                Groomer savedGroomer = groomerPersist.findByAccountId(otherUserId).orElse(null);
-                otherUserProfile = (savedGroomer != null) ? savedGroomer.getImageUrl() : null;
-                otherUserName = (savedGroomer != null) ? savedGroomer.getName() : null;
-            } else if (savedOtherUser.getRole().equals(Role.VET)) {
-                Vet savedVet = vetPersist.findByAccountId(otherUserId).orElse(null);
-                otherUserProfile = (savedVet != null) ? savedVet.getImageUrl() : null;
-                otherUserName = (savedVet != null) ? savedVet.getName() : null;
-            }
+
+        if (otherUser.getRole().equals(Role.GROOMER)) {
+            Groomer groomer = groomerPersist.findByAccountId(otherUserId).orElse(null);
+            otherUserProfile = groomer != null ? groomer.getImageUrl() : null;
+            otherUserName = groomer != null ? groomer.getName() : null;
+        } else if (otherUser.getRole().equals(Role.VET)) {
+            Vet vet = vetPersist.findByAccountId(otherUserId).orElse(null);
+            otherUserProfile = vet != null ? vet.getImageUrl() : null;
+            otherUserName = vet != null ? vet.getName() : null;
         } else {
-            User savedUser = userPersist.findByAccountId(otherUserId).orElse(null);
-            otherUserProfile = (savedUser != null) ? savedUser.getImageUrl() : null;
-            otherUserName = (savedUser != null) ? savedUser.getNickname() : null;
+            User user = userPersist.findByAccountId(otherUserId).orElse(null);
+            otherUserProfile = user != null ? user.getImageUrl() : null;
+            otherUserName = user != null ? user.getNickname() : null;
         }
 
-        List<ChatMessage> savedMessages = chatMessagePersist.findByChatRoomId(savedChatRoom.getChatRoomId());
-
-        if (savedMessages == null || savedMessages.isEmpty()) {
-            return ChatMessagesListResp.builder()
-                    .roomId(savedChatRoom.getChatRoomId())
-                    .userId(userAccountId)
-                    .otherId(otherUserId)
-                    .otherName(otherUserName)
-                    .otherProfile(otherUserProfile)
-                    .messagesGroupedByDate(Collections.emptyList())
-                    .build();
-        }
-
-        Map<LocalDate, List<ChatMessagesListResp.ChatMessageSummary>> groupedMessages = savedMessages.stream()
+        List<Map<String, Object>> messagesByDate = savedMessages.stream()
                 .sorted(Comparator.comparing(ChatMessage::getTimestamp))
                 .collect(Collectors.groupingBy(
                         message -> message.getTimestamp().toLocalDate(),
-                        Collectors.mapping(
-                                message -> ChatMessagesListResp.ChatMessageSummary.builder()
-                                        .messageId(message.getMessageId())
-                                        .messageSenderId(message.getSenderId())
-                                        .messageContent(message.getContent())
-                                        .messageTime(message.getTimestamp())
-                                        .messageType(message.getMessageType())
-                                        .build(),
-                                Collectors.toList()
-                        )));
-
-        List<Map<String, Object>> messagesByDate = groupedMessages.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
+                        LinkedHashMap::new,
+                        Collectors.mapping(message -> Map.of(
+                                "messageId", message.getMessageId(),
+                                "messageSenderId", message.getSenderId(),
+                                "messageContent", message.getContent(),
+                                "messageTime", message.getTimestamp(),
+                                "messageType", message.getMessageType()
+                        ), Collectors.toList())
+                ))
+                .entrySet()
+                .stream()
                 .map(entry -> {
-                    Map<String, Object> dateMap = new HashMap<>();
+                    Map<String, Object> dateMap = new LinkedHashMap<>();
                     dateMap.put("date", entry.getKey().toString());
                     dateMap.put("messages", entry.getValue());
                     return dateMap;
@@ -148,6 +142,7 @@ public class ChatService {
                 .build();
     }
 
+    @Transactional
     public boolean deleteChatRoom(Long roomId) {
         ChatRoom savedChatRoom = chatRoomPersist.findByRoomId(roomId);
         if (savedChatRoom == null) {
@@ -158,6 +153,7 @@ public class ChatService {
         return true;
     }
 
+    @Transactional
     public ChatMessage sendAndSaveMessage(ChatMessageReq chatMessageReq, Long roomId, Long accountId) {
         Long recipientId = findMessageRecipientByRoomId(roomId, chatMessageReq.getSenderId());
         Long messageId = System.currentTimeMillis();
@@ -206,6 +202,7 @@ public class ChatService {
                 .build();
     }
 
+    @Transactional
     public ChatRoom findOrSaveChatRoom(Role role, Long accountId, Long otherUserId) {
         ChatRoom toSaveChat = null;
         if (role.equals(Role.DAENGLE)) {
