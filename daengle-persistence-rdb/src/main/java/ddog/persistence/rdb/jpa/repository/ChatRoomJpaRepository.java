@@ -21,9 +21,9 @@ public interface ChatRoomJpaRepository extends JpaRepository<ChatRoomJpaEntity, 
             "CASE WHEN a.role = 'GROOMER' THEN g.imageUrl ELSE v.imageUrl END, " +
             "cr.partnerType " +
             "FROM ChatRooms cr " +
-            "JOIN Accounts a ON cr.partnerId = a.accountId " +
-            "LEFT JOIN Groomers g ON a.role = 'GROOMER' AND a.accountId = g.accountId " +
-            "LEFT JOIN Vets v ON a.role = 'VET' AND a.accountId = v.accountId " +
+            "JOIN FETCH Accounts a ON cr.partnerId = a.accountId " +
+            "LEFT JOIN FETCH Groomers g ON a.role = 'GROOMER' AND a.accountId = g.accountId " +
+            "LEFT JOIN FETCH Vets v ON a.role = 'VET' AND a.accountId = v.accountId " +
             "WHERE cr.userId = :userId AND cr.partnerType = :partnerType")
     List<Object[]> findAllByUserIdAndPartnerType(Long userId, PartnerType partnerType);
 }
