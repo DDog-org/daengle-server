@@ -2,11 +2,9 @@ package ddog.user.presentation.search;
 
 import ddog.auth.exception.common.CommonResponseEntity;
 import ddog.domain.groomer.enums.GroomingBadge;
-import ddog.domain.groomer.enums.GroomingKeyword;
 import ddog.domain.vet.enums.CareBadge;
-import ddog.domain.vet.enums.CareKeyword;
 import ddog.user.application.SearchService;
-import ddog.user.presentation.search.dto.SearchGroomingResultByKeyword;
+import ddog.user.presentation.search.dto.GroomerResult;
 import ddog.user.presentation.search.dto.SearchVetResultByKeyword;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,15 +20,16 @@ import static ddog.auth.exception.common.CommonResponseEntity.success;
 public class SearchController {
 
     private final SearchService searchService;
+
     @GetMapping("/groomer")
-    public CommonResponseEntity<SearchGroomingResultByKeyword> findGroomerSearchList(
+    public CommonResponseEntity<GroomerResult> findGroomerSearchList(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size,
             @RequestParam(required = false) String address,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) GroomingBadge tag
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) GroomingBadge badge
     ) {
-        return success(searchService.getGroomerResultBySearch(page, size, address, keyword, tag));
+        return success(searchService.findGroomerResultsBySearch(page, size, address, name, badge));
     }
 
     @GetMapping("/vet")

@@ -1,11 +1,12 @@
 package ddog.domain.groomer.port;
 
 import ddog.domain.groomer.Groomer;
+import ddog.domain.groomer.dto.SearchGroomerResultDto;
 import ddog.domain.groomer.enums.GroomingBadge;
-import ddog.domain.groomer.enums.GroomingKeyword;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface GroomerPersist {
@@ -16,6 +17,7 @@ public interface GroomerPersist {
 
     Optional<Groomer> findByGroomerId(Long groomerId);
 
-    Page<Groomer> findGroomerByKeyword(String address, String keyword, GroomingBadge tag, Pageable pageable);
+    List<SearchGroomerResultDto> findGroomersByKeywords(String address, String name, GroomingBadge badge, Pageable pageable);
+
     void deleteByAccountId(Long accountId);
 }

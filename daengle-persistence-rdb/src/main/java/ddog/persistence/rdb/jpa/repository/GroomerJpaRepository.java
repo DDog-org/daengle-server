@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface GroomerJpaRepository extends JpaRepository<GroomerJpaEntity, Long> {
@@ -16,16 +17,23 @@ public interface GroomerJpaRepository extends JpaRepository<GroomerJpaEntity, Lo
 
     Optional<GroomerJpaEntity> findByGroomerId(Long groomerId);
 
-    @Query("SELECT v FROM Groomers v " +
-            "LEFT JOIN v.keywords k " +
-            "WHERE (:address IS NULL OR :address = '' OR v.address LIKE CONCAT('%', :address, '%')) " +
-            "AND (:keyword IS NULL OR :keyword = '' OR v.name LIKE CONCAT('%', :keyword, '%')) " +
-            "AND (:badge IS NULL OR :badge = '' OR :badge MEMBER OF v.badges)")
-    Page<GroomerJpaEntity> findAllGroomersBy(
+    @Query("SELECT g.groomerId FROM Groomers g " +
+            "WHERE (:address IS NULL OR :address = '' OR g.address LIKE CONCAT('%', :address, '%')) " +
+            "AND (:name IS NULL OR :name = '' OR g.name LIKE CONCAT('%', :name, '%')) " +
+            "AND (:badge IS NULL OR :badge MEMBER OF g.badges)")
+    Page<Long> findPagedGroomerIds(
             @Param("address") String address,
-            @Param("keyword") String keyword,
+            @Param("name") String name,
             @Param("badge") GroomingBadge badge,
             Pageable pageable
     );
+
+    @Query(value =
+            "SELECT g.account_id, g.name, g.image_url, b.grooming_badge " +
+            "FROM groomers g " +
+            "LEFT JOIN grooming_badges b ON g.groomer_id = b.groomer_id " +
+            "WHERE g.groomer_id IN :ids", nativeQuery = true)
+    List<Object[]> findGroomersWithDetails(@Param("ids") List<Long> ids);
+
     void deleteByAccountId(Long accountId);
 }
