@@ -1,5 +1,6 @@
 package ddog.user.presentation.review;
 
+import ddog.auth.annotation.AuthPayload;
 import ddog.auth.dto.PayloadDto;
 import ddog.auth.exception.common.CommonResponseEntity;
 import ddog.user.presentation.review.dto.request.UpdateGroomingReviewInfo;
@@ -42,7 +43,7 @@ public class GroomingReviewController {
     }
 
     @GetMapping("/grooming/my-review/list")
-    public CommonResponseEntity<GroomingReviewListResp> findMyReviewList(PayloadDto payloadDto,
+    public CommonResponseEntity<GroomingReviewListResp> findMyReviewList(@AuthPayload PayloadDto payloadDto,
                                                                          @RequestParam(defaultValue = "0") int page,
                                                                          @RequestParam(defaultValue = "10") int size) {
         return success(groomingReviewService.findMyReviewList(payloadDto.getAccountId(), page, size));
