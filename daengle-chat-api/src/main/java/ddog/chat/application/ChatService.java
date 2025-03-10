@@ -1,6 +1,7 @@
 package ddog.chat.application;
 
 import ddog.chat.application.adapter.MessageConnector;
+import ddog.chat.application.dto.response.ProfileInfo;
 import ddog.chat.presentation.dto.ChatMessageReq;
 import ddog.chat.presentation.dto.ChatMessagesListResp;
 import ddog.chat.presentation.dto.PartnerChatRoomListResp;
@@ -14,11 +15,9 @@ import ddog.domain.chat.dto.ChatRoomListDto;
 import ddog.domain.chat.enums.PartnerType;
 import ddog.domain.chat.port.ChatMessagePersist;
 import ddog.domain.chat.port.ChatRoomPersist;
-import ddog.domain.groomer.Groomer;
 import ddog.domain.groomer.port.GroomerPersist;
 import ddog.domain.user.User;
 import ddog.domain.user.port.UserPersist;
-import ddog.domain.vet.Vet;
 import ddog.domain.vet.port.VetPersist;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,30 +47,11 @@ public class ChatService {
     public ChatMessagesListResp getAllMessagesByRoomId(Role role, Long userAccountId, Long otherUserId) {
         ChatRoom savedChatRoom = startChat(role, userAccountId, otherUserId);
 
-        CompletableFuture<Account> otherUserFuture = CompletableFuture.supplyAsync(() -> accountPersist.findById(otherUserId));
-        CompletableFuture<List<ChatMessage>> messagesFuture = CompletableFuture.supplyAsync(() ->
-                chatMessagePersist.findByChatRoomId(savedChatRoom.getChatRoomId())
-        );
+        Account savedOtherUser = accountPersist.findById(otherUserId);
 
-        Account otherUser = otherUserFuture.join();
-        List<ChatMessage> savedMessages = messagesFuture.join();
+        ProfileInfo profileInfo = getProfileInfo(savedOtherUser);
 
-        String otherUserProfile = null;
-        String otherUserName = null;
-
-        if (otherUser.getRole().equals(Role.GROOMER)) {
-            Groomer groomer = groomerPersist.findByAccountId(otherUserId).orElse(null);
-            otherUserProfile = groomer != null ? groomer.getImageUrl() : null;
-            otherUserName = groomer != null ? groomer.getName() : null;
-        } else if (otherUser.getRole().equals(Role.VET)) {
-            Vet vet = vetPersist.findByAccountId(otherUserId).orElse(null);
-            otherUserProfile = vet != null ? vet.getImageUrl() : null;
-            otherUserName = vet != null ? vet.getName() : null;
-        } else {
-            User user = userPersist.findByAccountId(otherUserId).orElse(null);
-            otherUserProfile = user != null ? user.getImageUrl() : null;
-            otherUserName = user != null ? user.getNickname() : null;
-        }
+        List<ChatMessage> savedMessages = chatMessagePersist.findByChatRoomId(savedChatRoom.getChatRoomId());
 
         List<Map<String, Object>> messagesByDate = savedMessages.stream()
                 .sorted(Comparator.comparing(ChatMessage::getTimestamp))
@@ -89,22 +68,37 @@ public class ChatService {
                 ))
                 .entrySet()
                 .stream()
-                .map(entry -> {
-                    Map<String, Object> dateMap = new LinkedHashMap<>();
-                    dateMap.put("date", entry.getKey().toString());
-                    dateMap.put("messages", entry.getValue());
-                    return dateMap;
-                })
+                .map(entry -> Map.of(
+                        "date", entry.getKey().toString(),
+                        "messages", entry.getValue()
+                ))
                 .collect(Collectors.toList());
 
         return ChatMessagesListResp.builder()
                 .roomId(savedChatRoom.getChatRoomId())
                 .userId(userAccountId)
                 .otherId(otherUserId)
-                .otherName(otherUserName)
-                .otherProfile(otherUserProfile)
+                .otherName(profileInfo.name())
+                .otherProfile(profileInfo.profileImageUrl())
                 .messagesGroupedByDate(messagesByDate)
                 .build();
+    }
+
+    private ProfileInfo getProfileInfo(Account account) {
+        if (account == null) return new ProfileInfo(null, null);
+
+        return switch (account.getRole()) {
+            case GROOMER -> groomerPersist.findByAccountId(account.getAccountId())
+                    .map(groomer -> new ProfileInfo(groomer.getName(), groomer.getImageUrl()))
+                    .orElse(new ProfileInfo(null, null));
+            case VET -> vetPersist.findByAccountId(account.getAccountId())
+                    .map(vet -> new ProfileInfo(vet.getName(), vet.getImageUrl()))
+                    .orElse(new ProfileInfo(null, null));
+            case DAENGLE -> userPersist.findByAccountId(account.getAccountId())
+                    .map(user -> new ProfileInfo(user.getNickname(), user.getImageUrl()))
+                    .orElse(new ProfileInfo(null, null));
+            default -> new ProfileInfo(null, null);
+        };
     }
 
     public UserChatRoomListResp findUserChatRoomList(Long userId, PartnerType partnerType) {
