@@ -1,14 +1,14 @@
 package ddog.chat.application.adapter;
 
 import ddog.domain.chat.ChatMessage;
-import ddog.domain.chat.port.MessageConnectManage;
+import ddog.domain.chat.port.MessageConnect;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class MessageConnector implements MessageConnectManage {
+public class MessageConnector implements MessageConnect {
 
     private final SimpMessagingTemplate messagingTemplate;
 
