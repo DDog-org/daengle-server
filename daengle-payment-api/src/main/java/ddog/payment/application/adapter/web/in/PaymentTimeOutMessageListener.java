@@ -2,7 +2,7 @@ package ddog.payment.application.adapter.web.in;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-//import ddog.domain.message.port.MessageSend;
+import ddog.domain.message.port.MessageSend;
 import ddog.domain.payment.port.PaymentTimeOutMessageListen;
 import ddog.payment.application.PaymentService;
 import ddog.payment.application.dto.message.PaymentTimeoutMessage;
@@ -20,7 +20,7 @@ public class PaymentTimeOutMessageListener implements PaymentTimeOutMessageListe
     private final ObjectMapper objectMapper;
     private final PaymentService paymentService;
 
-    //private final MessageSend messageSend;
+    private final MessageSend messageSend;
 
     //TODO 에러 로깅 슬랙 연동
     @Override
@@ -31,7 +31,7 @@ public class PaymentTimeOutMessageListener implements PaymentTimeOutMessageListe
             paymentService.refundPayment(paymentTimeoutMessage.getPaymentUid(), paymentTimeoutMessage.getOrderUid());
 
         } catch (Exception e) {
-            //messageSend.sendWithDelay(paymentTimeoutMessage);
+            messageSend.sendWithDelay(paymentTimeoutMessage);
         }
     }
 
