@@ -1,7 +1,7 @@
 package ddog.payment.presentation;
 
-import ddog.domain.message.port.MessageSend;
-import ddog.domain.message.port.MessageSendable;
+//import ddog.domain.message.port.MessageSend;
+//import ddog.domain.message.port.MessageSendable;
 import ddog.payment.application.dto.message.PaymentTimeoutMessage;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 @RequiredArgsConstructor
 @RequestMapping("/api/payment")
 public class DeployCheckController {
-    private final MessageSend messageSend;
+    //private final MessageSend messageSend;
     private String deploymentTime;
 
     @PostConstruct

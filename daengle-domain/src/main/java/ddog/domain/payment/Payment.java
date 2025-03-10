@@ -30,8 +30,8 @@ public class Payment {
     public static final String PAYMENT_SUCCESS_STATUS = "paid";
 
     //결제 완료 확인
-    public boolean checkIncompleteBy(String paymentStatus) {
-        return !Objects.equals(paymentStatus, PAYMENT_SUCCESS_STATUS);
+    public boolean checkIncompleteBy(PaymentStatus paymentStatus) {
+        return paymentStatus != PaymentStatus.PAYMENT_COMPLETED;
     }
 
     //결제 금액 유효성 검증
