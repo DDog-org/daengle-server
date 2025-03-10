@@ -1,5 +1,6 @@
 package ddog.user.presentation.reservation;
 
+import ddog.auth.annotation.AuthPayload;
 import ddog.auth.dto.PayloadDto;
 import ddog.auth.exception.common.CommonResponseEntity;
 import ddog.user.application.ReservationService;
@@ -24,22 +25,24 @@ public class ReservationController {
     }
 
     @GetMapping("/grooming/list")
-    public CommonResponseEntity<ReservationInfo.Grooming> findGroomingEstimates(PayloadDto payloadDto) {
+    public CommonResponseEntity<ReservationInfo.Grooming> findGroomingEstimates(@AuthPayload PayloadDto payloadDto) {
         return success(reservationService.findGroomingEstimates(payloadDto.getAccountId()));
     }
 
     @GetMapping("/care/list")
-    public CommonResponseEntity<ReservationInfo.Care> findCareEstimates(PayloadDto payloadDto) {
+    public CommonResponseEntity<ReservationInfo.Care> findCareEstimates(@AuthPayload PayloadDto payloadDto) {
         return success(reservationService.findCareEstimates(payloadDto.getAccountId()));
     }
 
     @GetMapping("/grooming/{estimateId}/detail")
-    public CommonResponseEntity<EstimateDetail.Grooming> getGroomingEstimateDetail(@PathVariable Long estimateId, PayloadDto payloadDto) {
+    public CommonResponseEntity<EstimateDetail.Grooming> getGroomingEstimateDetail(@PathVariable Long estimateId,
+                                                                                   @AuthPayload PayloadDto payloadDto) {
         return success(reservationService.getGroomingEstimateDetail(estimateId, payloadDto.getAccountId()));
     }
 
     @GetMapping("/care/{estimateId}/detail")
-    public CommonResponseEntity<EstimateDetail.Care> getCareEstimateDetail(@PathVariable Long estimateId, PayloadDto payloadDto) {
+    public CommonResponseEntity<EstimateDetail.Care> getCareEstimateDetail(@PathVariable Long estimateId,
+                                                                           @AuthPayload PayloadDto payloadDto) {
         return success(reservationService.getCareEstimateDetail(estimateId, payloadDto.getAccountId()));
     }
 }

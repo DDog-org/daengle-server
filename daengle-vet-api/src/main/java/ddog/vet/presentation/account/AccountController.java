@@ -1,5 +1,6 @@
 package ddog.vet.presentation.account;
 
+import ddog.auth.annotation.AuthPayload;
 import ddog.auth.dto.PayloadDto;
 import ddog.auth.exception.common.CommonResponseEntity;
 import ddog.vet.application.AccountService;
@@ -24,27 +25,28 @@ public class AccountController {
     }
 
     @GetMapping("/info")
-    public CommonResponseEntity<ProfileInfo> getVetInfo(PayloadDto payloadDto) {
+    public CommonResponseEntity<ProfileInfo> getVetInfo(@AuthPayload PayloadDto payloadDto) {
         return success(accountService.getVetInfo(payloadDto.getAccountId()));
     }
 
     @GetMapping("/modify-page")
-    public CommonResponseEntity<ProfileInfo.UpdatePage> getModifyInfo(PayloadDto payloadDto) {
+    public CommonResponseEntity<ProfileInfo.UpdatePage> getModifyInfo(@AuthPayload PayloadDto payloadDto) {
         return success(accountService.getModifyPage(payloadDto.getAccountId()));
     }
 
     @PatchMapping("/info")
-    public CommonResponseEntity<AccountResp> updateInfo(@RequestBody UpdateInfo request, PayloadDto payloadDto) {
+    public CommonResponseEntity<AccountResp> updateInfo(@RequestBody UpdateInfo request,
+                                                        @AuthPayload PayloadDto payloadDto) {
         return success(accountService.updateInfo(request, payloadDto.getAccountId()));
     }
 
     @GetMapping("/withdraw-info")
-    public CommonResponseEntity<WithdrawInfoResp> getWithdrawInfo(PayloadDto payloadDto) {
+    public CommonResponseEntity<WithdrawInfoResp> getWithdrawInfo(@AuthPayload PayloadDto payloadDto) {
         return success(accountService.getWithdrawInfo(payloadDto.getAccountId()));
     }
 
     @DeleteMapping("/info")
-    public CommonResponseEntity<WithdrawResp> withdraw(PayloadDto payloadDto) {
+    public CommonResponseEntity<WithdrawResp> withdraw(@AuthPayload PayloadDto payloadDto) {
         return success(accountService.withdraw(payloadDto.getAccountId()));
     }
 }

@@ -1,5 +1,6 @@
 package ddog.payment.presentation;
 
+import ddog.auth.annotation.AuthPayload;
 import ddog.auth.dto.PayloadDto;
 import ddog.auth.exception.common.CommonResponseEntity;
 import ddog.payment.presentation.dto.PostOrderInfo;
@@ -21,7 +22,7 @@ public class OrderController {
 
     @PostMapping("/order")
     public CommonResponseEntity<PostOrderResp> processOrder(@RequestHeader("Idempotency-Key") String idempotencyKey,
-                                                            PayloadDto payloadDto, @RequestBody PostOrderInfo postOrderInfo) {
+                                                            @AuthPayload PayloadDto payloadDto, @RequestBody PostOrderInfo postOrderInfo) {
         return success(orderService.processOrder(idempotencyKey, payloadDto.getAccountId(), postOrderInfo));
     }
 }

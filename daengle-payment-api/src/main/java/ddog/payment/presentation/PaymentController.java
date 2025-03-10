@@ -1,5 +1,6 @@
 package ddog.payment.presentation;
 
+import ddog.auth.annotation.AuthPayload;
 import ddog.auth.dto.PayloadDto;
 import ddog.auth.exception.common.CommonResponseEntity;
 import ddog.domain.payment.enums.ServiceType;
@@ -39,7 +40,7 @@ public class PaymentController {
 
     @GetMapping("/{serviceType}/history/list")
     public CommonResponseEntity<PaymentHistoryListResp> findPaymentHistoryList(
-            PayloadDto payloadDto,
+            @AuthPayload PayloadDto payloadDto,
             @PathVariable ServiceType serviceType,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

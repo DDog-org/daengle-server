@@ -1,5 +1,6 @@
 package ddog.groomer.presentation.schedule;
 
+import ddog.auth.annotation.AuthPayload;
 import ddog.auth.dto.PayloadDto;
 import ddog.auth.exception.common.CommonResponseEntity;
 import ddog.groomer.application.ScheduleInfoService;
@@ -18,7 +19,7 @@ public class ScheduleController {
     private final ScheduleInfoService scheduleInfoService;
 
     @GetMapping("/schedule")
-    public CommonResponseEntity<ScheduleResp> getGroomerSchedule(PayloadDto payloadDto) {
+    public CommonResponseEntity<ScheduleResp> getGroomerSchedule(@AuthPayload PayloadDto payloadDto) {
         return success(scheduleInfoService.getScheduleByGroomerAccountId(payloadDto.getAccountId()));
     }
 

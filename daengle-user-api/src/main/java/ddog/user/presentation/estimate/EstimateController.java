@@ -1,5 +1,6 @@
 package ddog.user.presentation.estimate;
 
+import ddog.auth.annotation.AuthPayload;
 import ddog.auth.dto.PayloadDto;
 import ddog.auth.exception.common.CommonResponseEntity;
 import ddog.domain.estimate.dto.PetInfos;
@@ -43,19 +44,19 @@ public class EstimateController {
 
     /* (일반) 대기 미용 견적서 페이지 반려동물 정보 반환 */
     @GetMapping("/general/grooming/pets")
-    public CommonResponseEntity<EstimateInfo.Pet> findGeneralGroomingPets(PayloadDto payloadDto) {
+    public CommonResponseEntity<EstimateInfo.Pet> findGeneralGroomingPets(@AuthPayload PayloadDto payloadDto) {
         return success(estimateService.findGeneralGroomingPets(payloadDto.getAccountId()));
     }
 
     /* (일반) 대기 진료 견적서 페이지 반려동물 정보 반환 */
     @GetMapping("/general/care/pets")
-    public CommonResponseEntity<EstimateInfo.Pet> findGeneralCarePets(PayloadDto payloadDto) {
+    public CommonResponseEntity<EstimateInfo.Pet> findGeneralCarePets(@AuthPayload PayloadDto payloadDto) {
         return success(estimateService.findGeneralCarePets(payloadDto.getAccountId()));
     }
 
     /* (일반) 대기 진료 견적서 페이지 반려동물 정보 반환 SQL 튜닝 버젼 */
     @GetMapping("/general/care/pets/tuning")
-    public CommonResponseEntity<PetInfos> findTuningGeneralCarePets(PayloadDto payloadDto) {
+    public CommonResponseEntity<PetInfos> findTuningGeneralCarePets(@AuthPayload PayloadDto payloadDto) {
         return success(estimateService.findTuningGeneralCarePets(payloadDto.getAccountId()));
     }
 
@@ -65,7 +66,7 @@ public class EstimateController {
             @PathVariable Long petId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            PayloadDto payloadDto
+            @AuthPayload PayloadDto payloadDto
     ) {
         return success(estimateService.findGeneralGroomingEstimates(petId, page, size, payloadDto.getAccountId()));
     }
@@ -76,20 +77,20 @@ public class EstimateController {
             @PathVariable Long petId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            PayloadDto payloadDto
+            @AuthPayload PayloadDto payloadDto
     ) {
         return success(estimateService.findGeneralCareEstimates(petId, page, size, payloadDto.getAccountId()));
     }
 
     /* (지정) 대기 미용 견적서 페이지 반려동물 정보 반환 */
     @GetMapping("/designation/grooming/pets")
-    public CommonResponseEntity<EstimateInfo.Pet> findDesignationGroomingPets(PayloadDto payloadDto) {
+    public CommonResponseEntity<EstimateInfo.Pet> findDesignationGroomingPets(@AuthPayload PayloadDto payloadDto) {
         return success(estimateService.findDesignationGroomingPets(payloadDto.getAccountId()));
     }
 
     /* (지정) 대기 진료 견적서 페이지 반려동물 정보 반환 */
     @GetMapping("/designation/care/pets")
-    public CommonResponseEntity<EstimateInfo.Pet> findDesignationCarePets(PayloadDto payloadDto) {
+    public CommonResponseEntity<EstimateInfo.Pet> findDesignationCarePets(@AuthPayload PayloadDto payloadDto) {
         return success(estimateService.findDesignationCarePets(payloadDto.getAccountId()));
     }
 
@@ -99,7 +100,7 @@ public class EstimateController {
             @PathVariable Long petId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            PayloadDto payloadDto
+            @AuthPayload PayloadDto payloadDto
     ) {
         return success(estimateService.findDesignationGroomingEstimates(petId, page, size, payloadDto.getAccountId()));
     }
@@ -110,7 +111,7 @@ public class EstimateController {
             @PathVariable Long petId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            PayloadDto payloadDto
+            @AuthPayload PayloadDto payloadDto
     ) {
         return success(estimateService.findDesignationCareEstimates(petId, page, size, payloadDto.getAccountId()));
     }
@@ -141,13 +142,15 @@ public class EstimateController {
 
     /* (대기) 미용 견적서 상세 조회 */
     @GetMapping("/{groomingEstimateId}/grooming-detail")
-    public CommonResponseEntity<GroomingEstimateDetail> getGroomingEstimateDetail(@PathVariable Long groomingEstimateId, PayloadDto payloadDto) {
+    public CommonResponseEntity<GroomingEstimateDetail> getGroomingEstimateDetail(@PathVariable Long groomingEstimateId,
+                                                                                  @AuthPayload PayloadDto payloadDto) {
         return success(estimateService.getGroomingEstimateDetail(groomingEstimateId, payloadDto.getAccountId()));
     }
 
     /* (대기) 진료 견적서 상세 조회 */
     @GetMapping("/{careEstimateId}/care-detail")
-    public CommonResponseEntity<CareEstimateDetail> getCareEstimateDetail(@PathVariable Long careEstimateId, PayloadDto payloadDto) {
+    public CommonResponseEntity<CareEstimateDetail> getCareEstimateDetail(@PathVariable Long careEstimateId,
+                                                                          @AuthPayload PayloadDto payloadDto) {
         return success(estimateService.getCareEstimateDetail(careEstimateId, payloadDto.getAccountId()));
     }
 }
