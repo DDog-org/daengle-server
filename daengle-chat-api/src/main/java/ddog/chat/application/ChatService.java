@@ -1,6 +1,6 @@
 package ddog.chat.application;
 
-import ddog.chat.application.adapter.MessageConnector;
+import ddog.chat.application.adapter.out.ChatMessageSender;
 import ddog.chat.application.dto.response.ProfileInfo;
 import ddog.chat.presentation.dto.ChatMessageReq;
 import ddog.chat.presentation.dto.ChatMessagesListResp;
@@ -37,7 +37,7 @@ public class ChatService {
     private final GroomerPersist groomerPersist;
     private final VetPersist vetPersist;
     private final AccountPersist accountPersist;
-    private final MessageConnector messageConnector;
+    private final ChatMessageSender messageConnector;
 
     private ChatRoom startChat(Role role, Long accountId, Long otherUserId) {
         return findOrSaveChatRoom(role, accountId, otherUserId);
