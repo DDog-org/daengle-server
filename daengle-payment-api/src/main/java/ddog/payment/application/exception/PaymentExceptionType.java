@@ -16,10 +16,11 @@ public enum PaymentExceptionType {
     PAYMENT_PG_TIMEOUT(HttpStatus.REQUEST_TIMEOUT, 5003, "PG사 API 연결 타임 아웃"),
     PAYMENT_ALREADY_COMPLETED(HttpStatus.NOT_FOUND, 5004, "이미 결제된 결제건"),
     PAYMENT_PG_AMOUNT_MISMATCH(HttpStatus.INTERNAL_SERVER_ERROR, 5005, "결제 금액 불일치"),
-    PAYMENT_CANCEL_BATCH_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 5006, "예약 취소 배치 처리 중 에러 발생"),
+    PAYMENT_RESERVATION_CANCEL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 5006, "예약 취소 중 에러 발생"),
+    PAYMENT_CANCEL_BATCH_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 5007, "예약 취소 배치 처리 중 에러 발생"),
 
-    PAYMENT_MESSAGE_PARSING_ERROR(HttpStatus.BAD_REQUEST, 5007, "결제 이벤트 메시지 발행 중 직렬화 에러 발생"),
-    PAYMENT_EVENT_PUBLISH_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 5008, "결제 이벤트 발행 중 알 수 없는 에러");
+    PAYMENT_MESSAGE_PARSING_ERROR(HttpStatus.BAD_REQUEST, 5008, "결제 이벤트 메시지 발행 중 직렬화 에러 발생"),
+    PAYMENT_EVENT_PUBLISH_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 5009, "결제 이벤트 발행 중 알 수 없는 에러");
 
     private final HttpStatus httpStatus;
     private final Integer code;

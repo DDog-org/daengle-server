@@ -1,6 +1,5 @@
 package ddog.payment.application;
 
-import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.request.CancelData;
 import ddog.domain.estimate.CareEstimate;
@@ -11,23 +10,25 @@ import ddog.domain.estimate.port.GroomingEstimatePersist;
 import ddog.domain.message.port.MessageSend;
 import ddog.domain.payment.Order;
 import ddog.domain.payment.Payment;
+import ddog.domain.payment.PaymentInfo;
 import ddog.domain.payment.Reservation;
 import ddog.domain.payment.enums.PaymentStatus;
 import ddog.domain.payment.enums.ServiceType;
 import ddog.domain.payment.port.OrderPersist;
+import ddog.domain.payment.port.PaymentGateway;
 import ddog.domain.payment.port.PaymentPersist;
 import ddog.domain.payment.port.ReservationPersist;
 import ddog.domain.review.port.CareReviewPersist;
 import ddog.domain.review.port.GroomingReviewPersist;
 import ddog.domain.user.User;
 import ddog.domain.user.port.UserPersist;
+import ddog.payment.application.adapter.web.out.PaymentEventPublisher;
 import ddog.payment.application.dto.message.PaymentTimeoutMessage;
 import ddog.payment.application.dto.request.PaymentCallbackReq;
 import ddog.payment.application.dto.response.*;
 import ddog.payment.application.exception.*;
 import ddog.payment.application.mapper.EventMapper;
 import ddog.payment.application.mapper.ReservationMapper;
-import ddog.payment.application.adapter.web.out.PaymentEventPublisher;
 import ddog.payment.application.dto.event.PaymentApplicationEvent;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
@@ -52,7 +53,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PaymentService {
 
-    private final IamportClient iamportClient;
+    private final PaymentGateway paymentGateway;
 
     private final UserPersist userPersist;
     private final OrderPersist orderPersist;
@@ -90,10 +91,9 @@ public class PaymentService {
                 .orElseThrow(() -> new PaymentException(PaymentExceptionType.PAYMENT_NOT_FOUND));
 
         BigDecimal refundAmount = savedPayment.calculateRefundAmount(savedReservation.getSchedule());
-        CancelData cancel_data = new CancelData(savedPayment.getPaymentUid(), true, refundAmount);
 
         try {
-            if (refundAmount.compareTo(BigDecimal.ZERO) > 0) iamportClient.cancelPaymentByImpUid(cancel_data);
+            if (refundAmount.compareTo(BigDecimal.ZERO) > 0) paymentGateway.cancelPayment(savedPayment.getPaymentUid(), true, refundAmount);
 
             savedPayment.cancel();
             paymentPersist.save(savedPayment);
@@ -107,6 +107,8 @@ public class PaymentService {
 
         } catch (IamportResponseException | IOException e) {
             throw new PaymentException(PaymentExceptionType.PAYMENT_PG_INTEGRATION_FAILED);
+        } catch (Exception e) {
+            throw new PaymentException(PaymentExceptionType.PAYMENT_RESERVATION_CANCEL_ERROR);
         }
     }
 
@@ -149,12 +151,11 @@ public class PaymentService {
             throw new PaymentException(PaymentExceptionType.PAYMENT_ALREADY_COMPLETED);
 
         try {
-            com.siot.IamportRestClient.response.Payment iamportResp =
-                    iamportClient.paymentByImpUid(paymentCallbackReq.getPaymentUid()).getResponse();
+            PaymentInfo paymentInfo = paymentGateway.getPaymentInfo(paymentCallbackReq.getPaymentUid());
 
             // 결제 검증 절차
-            String paymentStatus = iamportResp.getStatus();
-            long paymentAmount = iamportResp.getAmount().longValue();
+            PaymentStatus paymentStatus = paymentInfo.getStatus();
+            long paymentAmount = paymentInfo.getAmount().longValue();
 
             if (payment.checkIncompleteBy(paymentStatus)) {     //TODO 결제상태 변경과 영속도 도메인 엔티티에게 위임하기
                 payment.invalidate();
@@ -165,12 +166,11 @@ public class PaymentService {
             if (payment.checkInValidationBy(paymentAmount)) {   //TODO 결제상태 변경과 영속도 도메인 엔티티에게 위임하기
                 payment.invalidate();
                 paymentPersist.save(payment);
-
-                iamportClient.cancelPaymentByImpUid(new CancelData(iamportResp.getImpUid(), true, new BigDecimal(paymentAmount)));
+                paymentGateway.cancelPayment(paymentInfo.getImpUid(), true, new BigDecimal(paymentAmount));
                 throw new PaymentException(PaymentExceptionType.PAYMENT_PG_AMOUNT_MISMATCH);
             }
 
-            payment.validationSuccess(iamportResp.getImpUid());
+            payment.validationSuccess(paymentInfo.getImpUid());
             paymentPersist.save(payment);
 
             Reservation reservationToSave = ReservationMapper.createBy(savedOrder, payment);
@@ -188,8 +188,9 @@ public class PaymentService {
                     .build();
 
         } catch (IamportResponseException | IOException e) {
-            // PG사 통신 실패 처리
             throw new PaymentException(PaymentExceptionType.PAYMENT_PG_INTEGRATION_FAILED, e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -200,7 +201,6 @@ public class PaymentService {
                     .map(this::cancelReservation)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            // 예외 발생 시 전체 작업 롤백
             throw new PaymentException(PaymentExceptionType.PAYMENT_CANCEL_BATCH_ERROR);
         }
     }
@@ -216,14 +216,14 @@ public class PaymentService {
         CancelData cancelData = new CancelData(payment.getPaymentUid(), true, refundAmount);
 
         try {
-            iamportClient.cancelPaymentByImpUid(cancelData);  // 실제 환불 요청
+            paymentGateway.cancelPayment(payment.getPaymentUid(), true, refundAmount);  // 실제 환불 요청
             payment.cancel();
             paymentPersist.save(payment);
 
-            log.info("Refund processed successfully for paymentUid: {}", paymentUid);
         } catch (IamportResponseException | IOException e) {  //TODO 에러 로그 슬랙 연동
-            log.error("Payment gateway error while processing refund for paymentUid: {}", paymentUid, e);
             throw new PaymentException(PaymentExceptionType.PAYMENT_PG_INTEGRATION_FAILED);
+        } catch (Exception e) {
+            throw new PaymentException(PaymentExceptionType.PAYMENT_CANCEL_BATCH_ERROR);
         }
     }
 
@@ -234,9 +234,7 @@ public class PaymentService {
             throw (PaymentException) rootCause;
 
         } else if (rootCause instanceof TimeoutException) {
-
             sendPaymentTimeoutMessage(paymentCallbackReq);
-
             throw new PaymentException(PaymentExceptionType.PAYMENT_PG_TIMEOUT, rootCause);
         } else {
             throw new PaymentException(PaymentExceptionType.PAYMENT_PG_INTEGRATION_FAILED, rootCause);
@@ -249,7 +247,7 @@ public class PaymentService {
                 paymentCallbackReq.getOrderUid(),
                 paymentCallbackReq.getEstimateId()
         );
-        //SQS에 타임아웃 메시지 전송
+        //메시지 브로커에 타임아웃 메시지 전송
         messageSend.send(timeoutMessage);
     }
 
