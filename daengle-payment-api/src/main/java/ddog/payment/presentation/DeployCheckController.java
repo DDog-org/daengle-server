@@ -1,7 +1,6 @@
 package ddog.payment.presentation;
 
-//import ddog.domain.message.port.MessageSend;
-//import ddog.domain.message.port.MessageSendable;
+import ddog.domain.message.port.MessageSend;
 import ddog.payment.application.dto.message.PaymentTimeoutMessage;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 @RequiredArgsConstructor
 @RequestMapping("/api/payment")
 public class DeployCheckController {
-    //private final MessageSend messageSend;
+    private final MessageSend messageSend;
     private String deploymentTime;
 
     @PostConstruct
@@ -30,7 +29,7 @@ public class DeployCheckController {
     public String test() {
 
         PaymentTimeoutMessage message = new PaymentTimeoutMessage("TEST_PAYMENT_UID", "TEST_ORDER_UID", -1L);
-        //messageSend.send(message);
+        messageSend.send(message);
 
         return "Hello Daengle World - DIFF -MULTI MODULE !!!! PAYMENT API  2트!" +
                 " Made at: " + deploymentTime + "   CI/CD SUCCESS";
